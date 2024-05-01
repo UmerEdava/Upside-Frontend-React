@@ -41,7 +41,7 @@ function Comment({
           <Text>{comment}</Text>
           <Actions liked={liked} setLiked={setLiked} />
           <Text fontSize={"sm"} color={"gray.light"}>
-            {100 + (liked ? 1 : 0)} likes
+            {100 + (likes ? 1 : 0)} likes
           </Text>
         </Flex>
       </Flex>

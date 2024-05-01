@@ -13,11 +13,11 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import Comment from "../components/Comment";
 
-function PostPage(props: any) {
+function PostPage() {
   const location = useLocation();
   const state = location.state;
   console.log("🚀 ~ PostPage ~ state:", state);
-  const { likes, replies, postImg, postTitle } = state;
+  const { replies, postImg, postTitle } = state;
 
   const [liked, setLiked] = useState(false);
 
