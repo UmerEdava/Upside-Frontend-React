@@ -55,6 +55,7 @@ export default function SignupPage() {
     password: string;
     confirmPassword?: string;
   }>({ name: "", username: "", email: "", password: "", confirmPassword: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleValueChange = (name: string) => (e: any) => {
     setInputs({
@@ -64,6 +65,7 @@ export default function SignupPage() {
   };
 
   const handleSignup = async () => {
+    setLoading(true);
     try {
       delete inputs.confirmPassword;
 
@@ -87,6 +89,8 @@ export default function SignupPage() {
     } catch (error) {
       console.log('in errror',error);
       showToast("Error", "Something went wrong", "error", 3000, false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -289,6 +293,7 @@ export default function SignupPage() {
                 boxShadow: "xl",
               }}
               onClick={handleSignup}
+              isLoading={loading}
             >
               Sign up
             </Button>

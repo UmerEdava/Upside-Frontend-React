@@ -18,5 +18,9 @@ export const RouteNames = {
     editProfile: {
       name: "Edit Profile",
       path: "/profile/edit",
-  },
+    },
+    chat: {
+      name: "Chat",
+      path: "/chat",
+    },
 }

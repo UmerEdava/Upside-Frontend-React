@@ -1,20 +1,60 @@
-import { Avatar, Box, Flex, Image, Text } from "@chakra-ui/react";
+import { Avatar, Box, Button, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text } from "@chakra-ui/react";
 import { BsThreeDots } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import Actions from "./Actions";
 import { useState } from "react";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from 'date-fns'
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import useShowToast from "../hooks/useShowToast";
+import userAtom from "../atoms/userAtom";
+import { useRecoilValue } from "recoil";
 
-function UserPost({ post }: { post: any }) {
+function Post({ post, refetchPosts }: { post: any, refetchPosts: any }) {
+
+    const currentUser = useRecoilValue(userAtom)
+
+    const showToast = useShowToast();
+
   const [liked, setLiked] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const { _id, likes, comments, img, text, postedBy, createdAt } = post;
 
   const navigate = useNavigate();
 
+  const handleDeletePost = () => {
+    setIsDeleting(true);
+    try {
+      fetch(`/api/v1/post/${_id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.error) {
+            showToast("Error", data.error, "error", 3000, false);
+          } else {
+            showToast("Success", "Post deleted successfully", "success", 3000, false);
+            setIsDeleting(false);
+            refetchPosts();
+          }
+        })
+        .catch((error) => {
+          showToast("Error", "Something went wrong", "error", 3000, false);
+          setIsDeleting(false);
+        });
+    } catch (error) {
+      showToast("Error", "Something went wrong", "error", 3000, false);
+      setIsDeleting(false);
+    }
+  };
+
   return (
-    <Link to={`/${postedBy?.username}/post/${_id}`}>
+    
       <Flex gap={3} mb={4} py={5}>
+        {/* <Link to={`/${postedBy?.username}/post/${_id}`}> */}
         <Flex flexDirection={"column"} alignItems={"center"}>
           <Avatar
             size="md"
@@ -64,25 +104,46 @@ function UserPost({ post }: { post: any }) {
             )}
           </Box>
         </Flex>
+        {/* </Link> */}
+
         <Flex flex={1} flexDirection={"column"} gap={2}>
           <Flex justifyContent={"space-between"} w={"full"}>
+
+            <Link to={`/${postedBy?.username}/post/${_id}`}>
             <Flex w={"full"} alignItems={"center"}>
-              <Text fontSize={"sm"} fontWeight={"bold"} onClick={(e) => {
+              <Text
+                fontSize={"sm"}
+                fontWeight={"bold"}
+                mr={1}
+                onClick={(e) => {
                   e.preventDefault();
                   navigate(`/${postedBy?.username}`);
-                }}>
+                }}
+              >
                 {postedBy?.username}
               </Text>
               <Image src={"/verified.png"} w={4} h={4} />
             </Flex>
+            </Link>
+
             <Flex gap={4} alignItems={"center"}>
-              <Text fontStyle={"sm"} color={"gray.light"}>
-              {formatDistanceToNow(new Date(createdAt))} ago
+              <Text fontSize={"xs"} width={36} textAlign={'right'} color={"gray.light"}>
+                {createdAt && formatDistanceToNow(new Date(createdAt))} ago
               </Text>
-              <BsThreeDots />
+
+              <Menu>
+                <MenuButton>
+                  <BsThreeDots />
+                </MenuButton>
+                <MenuList p={0} minW={'5rem'}>
+                    <MenuItem fontSize={"sm"} >Report</MenuItem>
+                    {currentUser?._id === postedBy?._id && <MenuItem onClick={handleDeletePost} color={"red"} fontSize={"sm"} >Delete</MenuItem>}
+                </MenuList>
+               </Menu>
             </Flex>
           </Flex>
 
+          <Link to={`/${postedBy?.username}/post/${_id}`}>
           <Text fontSize={"sm"}>{text}</Text>
 
           {img && (
@@ -91,6 +152,7 @@ function UserPost({ post }: { post: any }) {
               overflow={"hidden"}
               border={"1px solid"}
               borderColor={"gray.light"}
+              mt={2}
             >
               <Image src={img} />
             </Box>
@@ -99,12 +161,13 @@ function UserPost({ post }: { post: any }) {
           <Flex gap={3} my={1}>
             <Actions post={post} />
           </Flex>
+          </Link>
 
           
         </Flex>
       </Flex>
-    </Link>
+    
   );
 }
 
-export default UserPost;
+export default Post;

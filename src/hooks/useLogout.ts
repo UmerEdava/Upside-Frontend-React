@@ -1,17 +1,14 @@
-import React from "react";
-import { useSetRecoilState } from "recoil";
-import userAtom from "../atoms/userAtom";
-import useShowToast from "../hooks/useShowToast";
-import { Button } from "@chakra-ui/react";
-import { Navigate } from "react-router-dom";
-import { RouteNames } from "../routes";
+import React from 'react'
+import { useSetRecoilState } from 'recoil';
+import userAtom from '../atoms/userAtom';
+import useShowToast from './useShowToast';
 
-const LogoutButton = () => {
-  const setUser = useSetRecoilState(userAtom);
+const useLogout = () => {
+    const setUser = useSetRecoilState(userAtom);
 
   const showToast = useShowToast();
 
-  const handleLogout = async () => {
+  const logout = async () => {
     try {
       const res = await fetch("/api/v1/auth/logout", {
         method: "POST",
@@ -37,10 +34,7 @@ const LogoutButton = () => {
       showToast("Error", "Something went wrong", "error", 3000, true);
     }
   };
+  return logout
+}
 
-  return (
-    <Button position={'fixed'} top={'30px'} right={'30px'} size={'sm'} onClick={handleLogout}>Logout</Button>
-  );
-};
-
-export default LogoutButton;
+export default useLogout
