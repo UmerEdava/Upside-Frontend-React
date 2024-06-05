@@ -10,21 +10,26 @@ import {
 } from "@chakra-ui/react";
 import Message from "./Message";
 import MessageInput from "./MessageInput";
-import { useRecoilState } from "recoil";
-import { selectedChatAtom } from "../atoms/messagesAtom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { chatsAtom, selectedChatAtom } from "../atoms/messagesAtom";
 import { useEffect, useRef, useState } from "react";
 import useShowToast from "../hooks/useShowToast";
 import userAtom from "../atoms/userAtom";
+import { useSocket } from "../context/SocketContext";
 
 const MessageContainer = () => {
   const showToast = useShowToast();
-
-  const [selectedChat, setSelectedChat] = useRecoilState(selectedChatAtom);
-  const [currentUser, setCurrentUser] = useRecoilState(userAtom);
+  const {socket} = useSocket();
+  
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+  
+  const selectedChat = useRecoilValue(selectedChatAtom);
+  const currentUser = useRecoilValue(userAtom);
+  const [chats, setChats] = useRecoilState(chatsAtom);
 
   const [loadingMessages, setLoadingMessages] = useState(true);
-  const [messages, setMessages] = useState([]);
-
+  const [messages, setMessages] = useState<any>([]);
+  
   const fetchMessages = async () => {
     try {
       
@@ -59,16 +64,92 @@ const MessageContainer = () => {
   };
 
   useEffect(() => {
+    socket.on("newMessage", (newMessage: any) => {
+      if (selectedChat?._id == newMessage.chatId) {
+        setMessages((prevMessages: any) => [...prevMessages, newMessage]);
+      }
+
+      setChats((prevChats: any) => {
+        const updatedChats = prevChats.map((chat: any) => {
+          if (chat._id === newMessage?.chatId) {
+            return {
+              ...chat,
+              lastMessage: {
+                text: newMessage.text,
+                sender: newMessage.sender,
+              },
+            };
+          }
+          return chat;
+        }) 
+        return updatedChats       
+      })
+
+    })
+
+    return () => socket.off("newMessage")
+  }, [socket, selectedChat, setChats])
+
+  useEffect(() => {
+    const lastMessageFromOtherUser = messages?.length && messages[messages.length - 1].sender != currentUser?._id
+
+    if (lastMessageFromOtherUser) {
+      socket.emit("markMessagesAsSeen", {
+        chatId: selectedChat._id,
+        userId: selectedChat.userId
+      })
+
+      setChats((prevChats: any) => {
+        const updatedChats = prevChats.map((chat: any) => {
+          if (chat._id == selectedChat?._id) {
+            return {
+              ...chat,
+              lastMessage: {
+                ...chat.lastMessage,
+                seen: true
+              },
+              unSeenCount: 0
+            }
+          }
+          return chat;
+        }) 
+        return updatedChats       
+      })
+    }
+
+    socket.on("seenMessages", ({chatId}: any) => {
+      if (selectedChat?._id == chatId) {
+        setMessages((prevMessages: any) => {
+          const updatedMessages = prevMessages.map((message: any) => {
+            if (!message.seen) {
+              return {
+                ...message,
+                seen: true
+              };
+            }
+            return message;
+          }) 
+          return updatedMessages       
+        })
+      }
+    })
+
+    // return () => socket.off("messagesSeen")
+  }, [socket, currentUser?._id, messages, selectedChat])
+
+  useEffect(() => {
     fetchMessages();
   }, [showToast, selectedChat?._id]);
-
-  const bottomRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (bottomRef?.current) {
       bottomRef.current.scrollIntoView({ behavior: 'auto' });
     }
   }, [messages]);
+
+  useEffect(() => {
+    console.log('chats changed: ',chats)
+  }, [chats]);
 
   return (
     <Flex
@@ -124,6 +205,7 @@ const MessageContainer = () => {
             <Message
               ownMessage={msg?.sender == currentUser?._id}
               message={msg}
+              key={msg?._id}
             />
           ))}
 

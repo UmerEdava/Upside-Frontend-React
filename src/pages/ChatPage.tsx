@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import useShowToast from "../hooks/useShowToast";
 import { useRecoilState } from "recoil";
 import { chatsAtom, selectedChatAtom } from "../atoms/messagesAtom";
+import { useSocket } from "../context/SocketContext";
 
 const ChatPage = () => {
   const showToast = useShowToast();
@@ -26,6 +27,8 @@ const ChatPage = () => {
   const [searchKey, setSearchKey] = useState('');
   const [searchUsers, setSearchUsers] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
+
+  const { socket, onlineUsers } = useSocket();
 
   const fetchChats = async () => {
     try {
@@ -89,6 +92,50 @@ const ChatPage = () => {
       setLoadingChats(false);
     }
   };
+
+  useEffect(() => {
+    socket?.on("seenMessages", ({chatId}: any) => {
+        setChats((prevChats: any) => {
+          const updatedChats = prevChats.map((chat: any) => {
+            if (chat._id == chatId) {
+              return {
+                ...chat,
+                lastMessage: {
+                  ...chat.lastMessage,
+                  seen: true
+                }
+              }
+            }
+            return chat;
+          }) 
+          return updatedChats       
+        })
+    })
+  }, [socket, setChats])
+
+  useEffect(() => {
+    socket?.on("newMessage", (newMessage: any) => {
+      setChats((prevChats: any) => {
+        const updatedChats = prevChats.map((chat: any) => {
+          if (chat._id === newMessage?.chatId) {
+            return {
+              ...chat,
+              lastMessage: {
+                text: newMessage.text,
+                sender: newMessage.sender,
+                ...(selectedChat?._id == newMessage?.chatId ? {seen: true} : {seen: false}),
+              },
+              ...(selectedChat?._id != newMessage?.chatId ? {unSeenCount: chat?.unSeenCount + 1} : {}),
+            };
+          }
+          return chat;
+        }) 
+        return updatedChats       
+      })
+    })
+  }, [socket, setChats])
+
+  
 
   return (
     <Box
@@ -161,7 +208,7 @@ const ChatPage = () => {
           {!loadingChats &&
             chats?.length > 0 &&
             chats?.map((chat: any) => (
-              <Conversation key={chat?._id} chat={chat} />
+              <Conversation key={chat?._id} chat={chat} isOnline={onlineUsers.includes(chat?.participants[0]?._id)} />
             ))}
         </Flex>
 
