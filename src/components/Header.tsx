@@ -5,8 +5,8 @@ import userAtom from "../atoms/userAtom";
 import { RouteNames } from "../routes";
 import { AiFillHome } from "react-icons/ai";
 import { RxAvatar } from "react-icons/rx";
-import lightImg from "../assets/images/light-logo.svg";
-import darkImg from "../assets/images/dark-logo.svg";
+import lightImg from "../assets/images/logo-light.png";
+import darkImg from "../assets/images/logo-dark.png";
 import useLogout from "../hooks/useLogout";
 import { BsFillChatQuoteFill } from "react-icons/bs";
 import { MdOutlineSettings } from "react-icons/md";
@@ -29,7 +29,8 @@ function Header() {
       <Image
         cursor={"pointer"}
         alt="logo"
-        w={6}
+        w={'2rem'}
+        h={'2rem'}
         src={colorMode === "dark" ? lightImg : darkImg}
         fallbackSrc={
           colorMode === "dark" ? lightImg : darkImg
