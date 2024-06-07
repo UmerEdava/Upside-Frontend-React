@@ -16,6 +16,7 @@ import { useEffect, useRef, useState } from "react";
 import useShowToast from "../hooks/useShowToast";
 import userAtom from "../atoms/userAtom";
 import { useSocket } from "../context/SocketContext";
+import messageNotificationSound from "../assets/audio/message-notification.mp3";
 
 const MessageContainer = () => {
   const showToast = useShowToast();
@@ -69,6 +70,11 @@ const MessageContainer = () => {
         setMessages((prevMessages: any) => [...prevMessages, newMessage]);
       }
 
+      if(!document.hasFocus()) {
+        const audio = new Audio(messageNotificationSound);
+        audio.play();
+      }
+
       setChats((prevChats: any) => {
         const updatedChats = prevChats.map((chat: any) => {
           if (chat._id === newMessage?.chatId) {
@@ -78,6 +84,7 @@ const MessageContainer = () => {
                 text: newMessage.text,
                 sender: newMessage.sender,
               },
+              ...(selectedChat?._id != chat?._id && { unSeenCount: chat.unSeenCount + 1 }),
             };
           }
           return chat;
@@ -101,7 +108,9 @@ const MessageContainer = () => {
 
       setChats((prevChats: any) => {
         const updatedChats = prevChats.map((chat: any) => {
+          console.log('hereeeee')
           if (chat._id == selectedChat?._id) {
+            console.log("innnnnnn fiiiiiiifffff")
             return {
               ...chat,
               lastMessage: {

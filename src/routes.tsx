@@ -23,4 +23,8 @@ export const RouteNames = {
       name: "Chat",
       path: "/chat",
     },
+    settings: {
+      name: "Settings",
+      path: "/settings",
+    },
 }

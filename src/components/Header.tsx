@@ -9,6 +9,7 @@ import lightImg from "../assets/images/light-logo.svg";
 import darkImg from "../assets/images/dark-logo.svg";
 import useLogout from "../hooks/useLogout";
 import { BsFillChatQuoteFill } from "react-icons/bs";
+import { MdOutlineSettings } from "react-icons/md";
 
 function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -44,6 +45,10 @@ function Header() {
 
         <Link as={RouterLink} to={RouteNames.chat.path}>
           <BsFillChatQuoteFill size={20} />
+        </Link>
+
+        <Link as={RouterLink} to={RouteNames.settings.path}>
+          <MdOutlineSettings size={20} />
         </Link>
 
         <Button size={'sm'} onClick={logout}>Logout</Button>

@@ -117,6 +117,7 @@ const ChatPage = () => {
     socket?.on("newMessage", (newMessage: any) => {
       setChats((prevChats: any) => {
         const updatedChats = prevChats.map((chat: any) => {
+          console.log('jk',chat?.unSeenCount)
           if (chat._id === newMessage?.chatId) {
             return {
               ...chat,
@@ -125,7 +126,7 @@ const ChatPage = () => {
                 sender: newMessage.sender,
                 ...(selectedChat?._id == newMessage?.chatId ? {seen: true} : {seen: false}),
               },
-              ...(selectedChat?._id != newMessage?.chatId ? {unSeenCount: chat?.unSeenCount + 1} : {}),
+              ...(selectedChat?._id != newMessage?.chatId ? {unSeenCount: chat?.unSeenCount ? chat?.unSeenCount + 1 : 1} : {}),
             };
           }
           return chat;

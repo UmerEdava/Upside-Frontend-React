@@ -1,7 +1,8 @@
-import { Flex, Link, Spinner, Text } from "@chakra-ui/react";
+import { Box, Flex, Link, Spinner, Text } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import useShowToast from "../hooks/useShowToast";
 import Post from "../components/Post";
+import SuggestedUsers from "../components/SuggestedUsers";
 
 const HomePage = () => {
   const showToast = useShowToast();
@@ -39,7 +40,8 @@ const HomePage = () => {
   }, [showToast]);
 
   return (
-    <>
+    <Flex gap={10} alignItems={'flex-start'}>
+     <Box flex={70}>
      {loading && (
         <Flex justifyContent={'center'}>
             <Spinner size="xl" />
@@ -55,7 +57,15 @@ const HomePage = () => {
             <Post post={post} key={post._id} refetchPosts={fetchFeedPosts}/>
         ))
      )}
-    </>
+     </Box>
+
+     <Box flex={30} display={{
+       base: 'none',
+       md: 'block'
+     }}>
+      <SuggestedUsers/>
+     </Box>
+    </Flex>
   );
 };
 

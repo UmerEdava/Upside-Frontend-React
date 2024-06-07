@@ -21,6 +21,7 @@ import userAtom from "../atoms/userAtom";
 import { RouteNames } from "../routes";
 import { useState } from "react";
 import useShowToast from "../hooks/useShowToast";
+import useFollowUnFollow from "../hooks/useFollowUnFollow";
 
 // user type
 export type User = {
@@ -38,54 +39,13 @@ function UserHeader({ user }: { user: User }) {
 
   const [currentUser, setCurrentUser] = useRecoilState(userAtom)
 
-  const [isFollowing, setIsFollowing] = useState(currentUser?.following?.includes(user?._id))
-  const [updating, setUpdating] = useState(false)
+  const {handleFollowUnFollowUser, updating, isFollowing} = useFollowUnFollow({user})
 
   const copyUrl = () => {
     navigator.clipboard.writeText(window.location.href).then(() => {
       showToast("Success", "Link copied", "success", 3000, false);
     });
   };
-
-  const followUnfollowUser = async () => {
-    setUpdating(true)
-    try {
-      const res = await fetch(`/api/v1/user/follow/${user?._id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-      if (data?.error) {
-        return showToast("Error", data.message, "error", 3000, false);
-      }
-
-      setIsFollowing(!isFollowing);
-
-      let newfollowingList = [...currentUser.following]
-
-      if (isFollowing) {
-        user.followers.pop()
-
-        // Remove this user from following list of current user
-        newfollowingList = currentUser.following.filter((following: string) => following !== user._id)
-      } else {
-        user.followers.push(currentUser._id)
-
-        // Add this user to following list of current user
-        newfollowingList.push(user._id)
-      }
-      
-      localStorage.setItem("user-upside", JSON.stringify({...currentUser, following: newfollowingList}));
-      setCurrentUser({...currentUser, following: newfollowingList})
-
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setUpdating(false)
-    }
-  }
 
   return (
     <>
@@ -125,13 +85,15 @@ function UserHeader({ user }: { user: User }) {
         )}
 
         {currentUser?._id !== user?._id && (
-            <Button size={"sm"} onClick={followUnfollowUser} isLoading={updating}>{isFollowing ? "Unfollow" : "Follow"}</Button>
+            <Button size={"sm"} onClick={handleFollowUnFollowUser} isLoading={updating}>{isFollowing ? "Unfollow" : "Follow"}</Button>
         )}
 
         <Flex justifyContent={"space-between"} w={"full"}>
           <Flex alignItems={"center"} gap={2}>
             <Text color={"gray.light"}>{user?.followers.length} Followers</Text>
             <Box w={1} h={1} bg={"gray.light"} borderRadius={"full"}></Box>
+            <Text color={"gray.light"}>{user?.following.length} Following</Text>
+
             <Link color={"gray.light"}>instagram.com</Link>
           </Flex>
           <Flex>
