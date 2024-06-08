@@ -18,6 +18,7 @@ import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
 import useShowToast from "../hooks/useShowToast";
+import customFetch from "../api";
 
 function Actions({ post: post_, refetch }: { post: any, refetch?: any }) {
   const user = useRecoilValue(userAtom);
@@ -45,7 +46,7 @@ function Actions({ post: post_, refetch }: { post: any, refetch?: any }) {
           false
         );
 
-      const res = await fetch(`/api/v1/post/like`, {
+      const res = await customFetch(`/api/v1/post/like`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -87,7 +88,7 @@ function Actions({ post: post_, refetch }: { post: any, refetch?: any }) {
           false
         );
 
-      const res = await fetch(`/api/v1/post/comment`, {
+      const res = await customFetch(`/api/v1/post/comment`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

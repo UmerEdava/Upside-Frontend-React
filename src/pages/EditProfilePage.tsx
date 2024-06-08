@@ -19,6 +19,7 @@ import { useRecoilState } from "recoil";
 import userAtom from "../atoms/userAtom";
 import usePreviewImg from "../hooks/usePreviewImg";
 import useShowToast from "../hooks/useShowToast";
+import customFetch from "../api";
 
 export default function EditProfilePage(): JSX.Element {
   const [user, setUser] = useRecoilState(userAtom);
@@ -57,7 +58,7 @@ export default function EditProfilePage(): JSX.Element {
 
     try {
       if (updating) return;
-      const res = await fetch("/api/v1/user", {
+      const res = await customFetch("/api/v1/user", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -5,6 +5,7 @@ import userAtom from "../atoms/userAtom";
 import { useRecoilValue } from "recoil";
 import useShowToast from "../hooks/useShowToast";
 import CommentActions from "./CommentActions";
+import customFetch from "../api";
 
 function Comment({
   id,
@@ -34,7 +35,7 @@ function Comment({
   const handleDeleteComment = (commentId: string) => {
     setIsCommentDeleting(true);
     try {
-      fetch(`/api/v1/post/comment?postId=${postId}&commentId=${commentId}`, {
+      customFetch(`/api/v1/post/comment?postId=${postId}&commentId=${commentId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

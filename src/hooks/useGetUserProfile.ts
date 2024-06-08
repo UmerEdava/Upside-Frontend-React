@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import useShowToast from "./useShowToast";
+import customFetch from "../api";
 
 const useGetUserProfile = () => {
   const [loading, setLoading] = useState(true);
@@ -13,7 +14,7 @@ const useGetUserProfile = () => {
     const fetchUserData = async () => {
       try {
         // Fetch user data
-        const res = await fetch(`/api/v1/user/${username}`, {
+        const res = await customFetch(`/api/v1/user/${username}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

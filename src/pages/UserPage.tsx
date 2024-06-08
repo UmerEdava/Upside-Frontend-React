@@ -6,6 +6,7 @@ import useShowToast from "../hooks/useShowToast";
 import Post from "../components/Post";
 import { useRecoilState } from "recoil";
 import userPostsAtom from "../atoms/userPostsAtom";
+import customFetch from "../api";
 
 function UserPage() {
   const showToast = useShowToast();
@@ -19,7 +20,7 @@ function UserPage() {
   const fetchUserPosts = async () => {
     try {
       // Fetch user data
-      const res = await fetch(`/api/v1/post/user/${username}`, {
+      const res = await customFetch(`/api/v1/post/user/${username}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -44,7 +45,7 @@ function UserPage() {
     const fetchUserData = async () => {
       try {
         // Fetch user data
-        const res = await fetch(`/api/v1/user/${username}`, {
+        const res = await customFetch(`/api/v1/user/${username}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

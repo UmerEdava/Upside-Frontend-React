@@ -21,6 +21,7 @@ import useShowToast from "../hooks/useShowToast";
 import { formatDistanceToNow } from "date-fns";
 import { useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
+import customFetch from "../api";
 
 function PostPage() {
   const { username, pid } = useParams();
@@ -38,7 +39,7 @@ function PostPage() {
   const fetchPostDetails = async () => {
     try {
       // Fetch user data
-      const res = await fetch(`/api/v1/post/${pid}`, {
+      const res = await customFetch(`/api/v1/post/${pid}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -67,7 +68,7 @@ function PostPage() {
   const handleDeletePost = () => {
     setIsDeleting(true);
     try {
-      fetch(`/api/v1/post/${pid}`, {
+      customFetch(`/api/v1/post/${pid}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

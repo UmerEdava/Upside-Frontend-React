@@ -8,6 +8,7 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'https://upside-backend-node.onrender.com',
+        // target: 'http://localhost:3333',
         changeOrigin: true,
         secure: false
       }

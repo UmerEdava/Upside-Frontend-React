@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import useShowToast from "../hooks/useShowToast";
 import Post from "../components/Post";
 import SuggestedUsers from "../components/SuggestedUsers";
+import customFetch from "../api";
 
 const HomePage = () => {
   const showToast = useShowToast();
@@ -13,7 +14,7 @@ const HomePage = () => {
   const fetchFeedPosts = async () => {
     try {
       // Fetch user data
-      const res = await fetch(`/api/v1/post/feed`, {
+      const res = await customFetch(`/api/v1/post/feed`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

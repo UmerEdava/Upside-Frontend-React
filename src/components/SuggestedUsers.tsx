@@ -2,6 +2,7 @@ import { Box, Flex, Skeleton, SkeletonCircle, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import SuggestedUser from "./SuggestedUser";
 import useShowToast from "../hooks/useShowToast";
+import customFetch from "../api";
 
 const SuggestedUsers = () => {
 
@@ -13,7 +14,7 @@ const SuggestedUsers = () => {
   const fetchSuggestedUsers = async () => {
     try {
       // Fetch user data
-      const res = await fetch(`/api/v1/user/suggested`, {
+      const res = await customFetch(`/api/v1/user/suggested`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

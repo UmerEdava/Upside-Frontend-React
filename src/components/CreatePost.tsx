@@ -24,6 +24,7 @@ import usePreviewImg from "../hooks/usePreviewImg";
 import { BsFillImageFill } from "react-icons/bs";
 import { useRecoilState } from "recoil";
 import userPostsAtom from "../atoms/userPostsAtom";
+import customFetch from "../api";
 
 const CreatePost = () => {
 
@@ -77,7 +78,7 @@ const CreatePost = () => {
 const handleCreatePost = async () => {
   setLoading(true);
     try {    
-      const res = await fetch("/api/v1/post", {
+      const res = await customFetch("/api/v1/post", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

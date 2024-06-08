@@ -16,6 +16,7 @@ import useShowToast from "../hooks/useShowToast";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { chatsAtom, selectedChatAtom } from "../atoms/messagesAtom";
 import { useSocket } from "../context/SocketContext";
+import customFetch from "../api";
 
 const ChatPage = () => {
   const showToast = useShowToast();
@@ -32,7 +33,7 @@ const ChatPage = () => {
   const fetchChats = async () => {
     try {
       // Fetch chats
-      const res = await fetch(`/api/v1/chat/getAllChats`, {
+      const res = await customFetch(`/api/v1/chat/getAllChats`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -68,7 +69,7 @@ const ChatPage = () => {
       setLoadingChats(true);
       
       // Fetch chats
-      const res = await fetch(`/api/v1/chat/search/${searchKey}`, {
+      const res = await customFetch(`/api/v1/chat/search/${searchKey}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

@@ -20,6 +20,7 @@ import { useState } from "react";
 import useShowToast from "../hooks/useShowToast";
 import { useSetRecoilState } from "recoil";
 import userAtom from "../atoms/userAtom";
+import customFetch from "../api";
 
 const avatars = [
   {
@@ -69,7 +70,7 @@ export default function SignupPage() {
     try {
       delete inputs.confirmPassword;
 
-      const res = await fetch("/api/v1/auth/signup", {
+      const res = await customFetch("/api/v1/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

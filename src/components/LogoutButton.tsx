@@ -2,6 +2,7 @@ import { useSetRecoilState } from "recoil";
 import userAtom from "../atoms/userAtom";
 import useShowToast from "../hooks/useShowToast";
 import { Button } from "@chakra-ui/react";
+import customFetch from "../api";
 
 const LogoutButton = () => {
   const setUser = useSetRecoilState(userAtom);
@@ -10,7 +11,7 @@ const LogoutButton = () => {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch("/api/v1/auth/logout", {
+      const res = await customFetch("/api/v1/auth/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

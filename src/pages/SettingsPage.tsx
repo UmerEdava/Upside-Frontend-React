@@ -2,6 +2,7 @@ import { Button, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import useShowToast from '../hooks/useShowToast';
 import useLogout from '../hooks/useLogout';
+import customFetch from '../api';
 
 const SettingsPage = () => {
 
@@ -18,7 +19,7 @@ const SettingsPage = () => {
       setLoading(true);
 
       // Calling deactivate API
-      const res = await fetch(`/api/v1/user/deactivate`, {
+      const res = await customFetch(`/api/v1/user/deactivate`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

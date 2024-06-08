@@ -6,6 +6,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { chatsAtom, selectedChatAtom } from "../atoms/messagesAtom";
 import { BsFillImageFill } from "react-icons/bs";
 import usePreviewImg from "../hooks/usePreviewImg";
+import customFetch from "../api";
 
 const MessageInput = ({ setMessages }: { setMessages: any }) => {
 
@@ -40,7 +41,7 @@ const MessageInput = ({ setMessages }: { setMessages: any }) => {
       setIsSending(true)
 
       // Calling send message API
-      const res = await fetch(`/api/v1/chat/messages`, {
+      const res = await customFetch(`/api/v1/chat/messages`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

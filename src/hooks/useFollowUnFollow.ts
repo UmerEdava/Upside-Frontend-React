@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useRecoilState } from 'recoil'
 import userAtom from '../atoms/userAtom'
 import useShowToast from './useShowToast'
+import customFetch from '../api'
 
 const useFollowUnFollow = ({user}: {user: any}) => {
 
@@ -16,7 +17,7 @@ const useFollowUnFollow = ({user}: {user: any}) => {
     const handleFollowUnFollowUser = async () => {
         setUpdating(true)
         try {
-          const res = await fetch(`/api/v1/user/follow/${user?._id}`, {
+          const res = await customFetch(`/api/v1/user/follow/${user?._id}`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",

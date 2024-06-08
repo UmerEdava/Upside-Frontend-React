@@ -7,6 +7,7 @@ import { formatDistanceToNow } from 'date-fns'
 import useShowToast from "../hooks/useShowToast";
 import userAtom from "../atoms/userAtom";
 import { useRecoilValue } from "recoil";
+import customFetch from "../api";
 
 function Post({ post, refetchPosts }: { post: any, refetchPosts: any }) {
 
@@ -23,7 +24,7 @@ function Post({ post, refetchPosts }: { post: any, refetchPosts: any }) {
   const handleDeletePost = () => {
     setIsDeleting(true);
     try {
-      fetch(`/api/v1/post/${_id}`, {
+      customFetch(`/api/v1/post/${_id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

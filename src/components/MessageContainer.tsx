@@ -17,6 +17,7 @@ import useShowToast from "../hooks/useShowToast";
 import userAtom from "../atoms/userAtom";
 import { useSocket } from "../context/SocketContext";
 import messageNotificationSound from "../assets/audio/message-notification.mp3";
+import customFetch from "../api";
 
 const MessageContainer = () => {
   const showToast = useShowToast();
@@ -43,7 +44,7 @@ const MessageContainer = () => {
 
       setLoadingMessages(true);
       // Fetch chats
-      const res = await fetch(`/api/v1/chat/${selectedChat?._id}/messages`, {
+      const res = await customFetch(`/api/v1/chat/${selectedChat?._id}/messages`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
