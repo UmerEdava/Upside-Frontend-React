@@ -1,6 +1,5 @@
 import {
   Avatar,
-  AvatarBadge,
   Box,
   Button,
   Flex,
@@ -41,7 +40,9 @@ function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchKey, setSearchKey] = useState('');
   const [searchLoading, setSearchLoading] = useState(false);
+  console.log("🚀 ~ Header ~ searchLoading:", searchLoading)
   const [loadingChat, setLoadingChats] = useState(false);
+  console.log("🚀 ~ Header ~ loadingChat:", loadingChat)
   const [searchResult, setSearchResult] = useState<any>([])
 
   const handleSearchUsers = async (e: any) => {
