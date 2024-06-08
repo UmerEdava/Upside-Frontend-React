@@ -6,7 +6,6 @@ import {
   Link,
   Skeleton,
   SkeletonCircle,
-  Text,
   useColorModeValue,
 } from "@chakra-ui/react";
 import Message from "./Message";
@@ -31,6 +30,7 @@ const MessageContainer = () => {
   const selectedChat = useRecoilValue(selectedChatAtom);
   const currentUser = useRecoilValue(userAtom);
   const [chats, setChats] = useRecoilState(chatsAtom);
+  console.log("🚀 ~ MessageContainer ~ chats:", chats)
 
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [messages, setMessages] = useState<any>([]);
