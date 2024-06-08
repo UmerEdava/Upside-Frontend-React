@@ -148,7 +148,9 @@ const ChatPage = () => {
         lg: "750px",
       }}
       transform={"translateX(-50%)"}
-      p={4}
+      p={{
+        md: 4,
+      }}
     >
       <Flex
         gap={4}
@@ -170,7 +172,7 @@ const ChatPage = () => {
             sm: "250px",
             md: "full",
           }}
-          mx={"auto"}
+          // mx={"auto"}
         >
           <Text
             fontWeight={700}

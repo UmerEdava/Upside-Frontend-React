@@ -3,6 +3,7 @@ import {
   Divider,
   Flex,
   Image,
+  Link,
   Skeleton,
   SkeletonCircle,
   Text,
@@ -18,6 +19,8 @@ import userAtom from "../atoms/userAtom";
 import { useSocket } from "../context/SocketContext";
 import messageNotificationSound from "../assets/audio/message-notification.mp3";
 import customFetch from "../api";
+import { RouteNames } from "../routes";
+import { Link as RouterLink } from "react-router-dom";
 
 const MessageContainer = () => {
   const showToast = useShowToast();
@@ -109,9 +112,7 @@ const MessageContainer = () => {
 
       setChats((prevChats: any) => {
         const updatedChats = prevChats.map((chat: any) => {
-          console.log('hereeeee')
           if (chat._id == selectedChat?._id) {
-            console.log("innnnnnn fiiiiiiifffff")
             return {
               ...chat,
               lastMessage: {
@@ -157,10 +158,6 @@ const MessageContainer = () => {
     }
   }, [messages]);
 
-  useEffect(() => {
-    console.log('chats changed: ',chats)
-  }, [chats]);
-
   return (
     <Flex
       flex={70}
@@ -172,10 +169,10 @@ const MessageContainer = () => {
       {/* Header */}
       <Flex w={"full"} h={12} alignItems={"center"} gap={2}>
         <Avatar src={selectedChat?.profilePic} size={"sm"} />
-        <Text display={"flex"} alignItems={"center"}>
+        <Link as={RouterLink} to={RouteNames.home.path + `${selectedChat?.username}`} display={"flex"} alignItems={"center"} _hover={{ textDecoration: "none" }}>
           {selectedChat?.username}
           <Image src={"/verified.png"} w={4} h={4} ml={1} />
-        </Text>
+        </Link>
       </Flex>
 
       <Divider />

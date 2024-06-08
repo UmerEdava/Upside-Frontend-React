@@ -4,6 +4,7 @@ import {
   Box,
   Flex,
   Image,
+  Link,
   Stack,
   Text,
   useColorMode,
@@ -14,6 +15,8 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
 import { BsCheck2All, BsFillImageFill } from "react-icons/bs";
 import { selectedChatAtom } from "../atoms/messagesAtom";
+import { RouteNames } from "../routes";
+import { Link as RouterLink } from "react-router-dom";
 
 const Conversation = ({ chat, isOnline }: { chat: any; isOnline: boolean }) => {
   const currentUser = useRecoilValue(userAtom);
@@ -66,9 +69,9 @@ const Conversation = ({ chat, isOnline }: { chat: any; isOnline: boolean }) => {
         </Avatar>
       </WrapItem>
       <Stack direction={"column"} fontSize={"sm"}>
-        <Text fontWeight={700} display={"flex"} alignItems={"center"}>
+        <Link as={RouterLink} to={RouteNames.home.path + `${user?.username}`} fontWeight={700} display={"flex"} alignItems={"center"} _hover={{ textDecoration: "none" }}>
           {user?.username} <Image src={"/verified.png"} w={4} h={4} ml={1} />
-        </Text>
+        </Link>
 
         <Text fontSize={"xs"} display={"flex"} alignItems={"center"} gap={1}>
           {currentUser?._id == chat?.lastMessage?.sender ? (
