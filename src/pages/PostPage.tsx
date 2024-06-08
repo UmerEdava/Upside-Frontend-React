@@ -15,7 +15,7 @@ import {
 import { BsThreeDots } from "react-icons/bs";
 import Actions from "../components/Actions";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Comment from "../components/Comment";
 import useShowToast from "../hooks/useShowToast";
 import { formatDistanceToNow } from "date-fns";
@@ -34,7 +34,6 @@ function PostPage() {
   const [post, setPost] = useState<any>();
   const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isCommentDeleting, setIsCommentDeleting] = useState(false);
 
   const fetchPostDetails = async () => {
     try {
@@ -85,6 +84,7 @@ function PostPage() {
           }
         })
         .catch((error) => {
+          console.log("error:", error)
           showToast("Error", "Something went wrong", "error", 3000, false);
           setIsDeleting(false);
         });
@@ -130,7 +130,7 @@ function PostPage() {
                 </MenuButton>
                 <MenuList p={0} minW={'5rem'}>
                     <MenuItem fontSize={"sm"} >Report</MenuItem>
-                    {currentUser?._id === post?.postedBy?._id && <MenuItem onClick={handleDeletePost} color={"red"} fontSize={"sm"} >Delete</MenuItem>}
+                    {currentUser?._id === post?.postedBy?._id && <MenuItem onClick={handleDeletePost} color={"red"} fontSize={"sm"} >{isDeleting ? "Deleting..." : "Delete"}</MenuItem>}
                 </MenuList>
                </Menu>
 
@@ -175,7 +175,6 @@ function PostPage() {
               username={comment.userId?.username}
               userAvatar={comment.userId?.profilePic}
               postId={pid}
-              postedBy={post?.postedBy}
               refetch={fetchPostDetails}
             />
           ))}

@@ -1,6 +1,6 @@
 import { Avatar, Box, Flex, Image, Skeleton, Text } from "@chakra-ui/react";
-import React, { useState } from "react";
-import { useRecoilState } from "recoil";
+import { useState } from "react";
+import { useRecoilValue } from "recoil";
 import { selectedChatAtom } from "../atoms/messagesAtom";
 import userAtom from "../atoms/userAtom";
 import { BsCheck2All } from "react-icons/bs";
@@ -12,8 +12,8 @@ const Message = ({
   message: { text: string, img: string, seen: boolean };
   ownMessage: boolean;
 }) => {
-  const [selectedChat, setSelectedChat] = useRecoilState(selectedChatAtom);
-  const [currentUser, setCurrentUser] = useRecoilState(userAtom);
+  const selectedChat = useRecoilValue(selectedChatAtom);
+  const currentUser = useRecoilValue(userAtom);
 
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 

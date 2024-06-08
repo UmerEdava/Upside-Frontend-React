@@ -3,7 +3,6 @@ import {
     Button,
     Flex,
     FormControl,
-    FormLabel,
     Input,
     Modal,
     ModalBody,
@@ -15,12 +14,12 @@ import {
     Text,
     useDisclosure,
   } from "@chakra-ui/react";
-  import { useRef, useState } from "react";
+  import { useState } from "react";
   import { useRecoilValue } from "recoil";
   import userAtom from "../atoms/userAtom";
   import useShowToast from "../hooks/useShowToast";
   
-  function CommentActions({ postId , comment: comment_, refetch }: { postId: string, comment: any, refetch?: any }) {
+  function CommentActions({ postId , comment: comment_ }: { postId: string, comment: any }) {
     const user = useRecoilValue(userAtom);
   
     const showToast = useShowToast();
@@ -189,7 +188,12 @@ import {
           </ModalBody>
   
           <ModalFooter>
-            <Button colorScheme='blue' size={"sm"}  isLoading={isCommenting} loadingText={"Replying..."}>
+            <Button colorScheme='blue' size={"sm"} onClick={() => {
+              setIsCommenting(true)
+              setTimeout(() => {
+                setIsCommenting(false)                
+              }, 1000);
+            }}  isLoading={isCommenting} loadingText={"Replying..."}>
               Reply
             </Button>
           </ModalFooter>

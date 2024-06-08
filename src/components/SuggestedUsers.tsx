@@ -1,5 +1,5 @@
 import { Box, Flex, Skeleton, SkeletonCircle, Text } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import SuggestedUser from "./SuggestedUser";
 import useShowToast from "../hooks/useShowToast";
 

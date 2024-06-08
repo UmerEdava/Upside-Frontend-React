@@ -40,7 +40,7 @@ const CreatePost = () => {
     text: string
   }>({ text: "" });
   const [remainingChar, setRemainingChar] = useState(500);
-  const [maxChar, setMaxChar] = useState(500);
+  const maxChar = 500;
   const [loading, setLoading] = useState(false);
 
   const handleValueChange = (name: string) => (e: any) => {

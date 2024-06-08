@@ -1,10 +1,9 @@
-import { Avatar, Box, Button, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text } from "@chakra-ui/react";
+import { Avatar, Box, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text } from "@chakra-ui/react";
 import { BsThreeDots } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import Actions from "./Actions";
 import { useState } from "react";
 import { formatDistanceToNow } from 'date-fns'
-import { ChevronDownIcon } from "@chakra-ui/icons";
 import useShowToast from "../hooks/useShowToast";
 import userAtom from "../atoms/userAtom";
 import { useRecoilValue } from "recoil";
@@ -15,10 +14,9 @@ function Post({ post, refetchPosts }: { post: any, refetchPosts: any }) {
 
     const showToast = useShowToast();
 
-  const [liked, setLiked] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const { _id, likes, comments, img, text, postedBy, createdAt } = post;
+  const { _id, comments, img, text, postedBy, createdAt } = post;
 
   const navigate = useNavigate();
 
@@ -46,6 +44,7 @@ function Post({ post, refetchPosts }: { post: any, refetchPosts: any }) {
           setIsDeleting(false);
         });
     } catch (error) {
+      console.log("error:", error)
       showToast("Error", "Something went wrong", "error", 3000, false);
       setIsDeleting(false);
     }
@@ -137,7 +136,7 @@ function Post({ post, refetchPosts }: { post: any, refetchPosts: any }) {
                 </MenuButton>
                 <MenuList p={0} minW={'5rem'}>
                     <MenuItem fontSize={"sm"} >Report</MenuItem>
-                    {currentUser?._id === postedBy?._id && <MenuItem onClick={handleDeletePost} color={"red"} fontSize={"sm"} >Delete</MenuItem>}
+                    {currentUser?._id === postedBy?._id && <MenuItem onClick={handleDeletePost} color={"red"} fontSize={"sm"} >{isDeleting ? "Deleting..." : "Delete"}</MenuItem>}
                 </MenuList>
                </Menu>
             </Flex>

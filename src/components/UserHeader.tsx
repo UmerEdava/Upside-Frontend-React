@@ -10,16 +10,14 @@ import {
   MenuList,
   Portal,
   Text,
-  useToast,
   VStack,
 } from "@chakra-ui/react";
 import { BsInstagram } from "react-icons/bs";
 import { CgMoreO } from "react-icons/cg";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import { Link as RouterLink } from "react-router-dom";
 import userAtom from "../atoms/userAtom";
 import { RouteNames } from "../routes";
-import { useState } from "react";
 import useShowToast from "../hooks/useShowToast";
 import useFollowUnFollow from "../hooks/useFollowUnFollow";
 
@@ -37,7 +35,7 @@ export type User = {
 function UserHeader({ user }: { user: User }) {
   const showToast = useShowToast();
 
-  const [currentUser, setCurrentUser] = useRecoilState(userAtom)
+  const currentUser = useRecoilValue(userAtom)
 
   const {handleFollowUnFollowUser, updating, isFollowing} = useFollowUnFollow({user})
 

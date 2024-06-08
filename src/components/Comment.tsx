@@ -1,7 +1,6 @@
 import { Avatar, Flex, Menu, MenuButton, MenuItem, MenuList, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
-import Actions from "./Actions";
 import userAtom from "../atoms/userAtom";
 import { useRecoilValue } from "recoil";
 import useShowToast from "../hooks/useShowToast";
@@ -13,7 +12,6 @@ function Comment({
   userAvatar,
   username,
   createdAt,
-  postedBy,
   postId,
   refetch
 }: {
@@ -23,11 +21,9 @@ function Comment({
   username: string;
   createdAt: string;
   likes: number;
-  postedBy: any;
   postId: any;
   refetch?: any;
 }) {
-  const [liked, setLiked] = useState(false);
 
   const currentUser = useRecoilValue(userAtom);
 
@@ -57,7 +53,8 @@ function Comment({
             }
           }
         })
-        .catch((error) => {
+        .catch((error: any) => {
+          console.log(error);
           showToast("Error", "Something went wrong", "error", 3000, false);
           setIsCommentDeleting(false);
         });
@@ -91,7 +88,7 @@ function Comment({
                 </MenuButton>
                 <MenuList p={0} minW={'5rem'}>
                     <MenuItem fontSize={"sm"} >Report</MenuItem>
-                    {currentUser?._id === comment?.userId?._id && <MenuItem onClick={() => handleDeleteComment(id)} color={"red"} fontSize={"sm"} >Delete</MenuItem>}
+                    {currentUser?._id === comment?.userId?._id && <MenuItem onClick={() => handleDeleteComment(id)} color={"red"} fontSize={"sm"} >{isCommentDeleting ? "Deleting..." : "Delete"}</MenuItem>}
                 </MenuList>
                </Menu>
 

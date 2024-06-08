@@ -15,7 +15,7 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { RouteNames } from "../routes";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import useShowToast from "../hooks/useShowToast";
 import { useSetRecoilState } from "recoil";

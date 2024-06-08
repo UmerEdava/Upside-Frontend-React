@@ -13,7 +13,7 @@ import { GiConversation } from "react-icons/gi";
 import MessageContainer from "../components/MessageContainer";
 import { useEffect, useState } from "react";
 import useShowToast from "../hooks/useShowToast";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { chatsAtom, selectedChatAtom } from "../atoms/messagesAtom";
 import { useSocket } from "../context/SocketContext";
 
@@ -21,11 +21,10 @@ const ChatPage = () => {
   const showToast = useShowToast();
 
   const [chats, setChats] = useRecoilState(chatsAtom);
-  const [selectedChat, setSelectedChat] = useRecoilState(selectedChatAtom);
+  const selectedChat = useRecoilValue(selectedChatAtom);
 
   const [loadingChats, setLoadingChats] = useState(true);
   const [searchKey, setSearchKey] = useState('');
-  const [searchUsers, setSearchUsers] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
 
   const { socket, onlineUsers } = useSocket();

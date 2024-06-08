@@ -1,25 +1,27 @@
-import { Button, Flex, Image, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, useDisclosure } from "@chakra-ui/react";
+import { Flex, Image, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Spinner, useDisclosure } from "@chakra-ui/react";
 import { IoSendSharp } from "react-icons/io5";
 import useShowToast from "../hooks/useShowToast";
 import { useRef, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { chatsAtom, selectedChatAtom } from "../atoms/messagesAtom";
 import { BsFillImageFill } from "react-icons/bs";
 import usePreviewImg from "../hooks/usePreviewImg";
 
 const MessageInput = ({ setMessages }: { setMessages: any }) => {
 
-  const [selectedChat, setSelectedChat] = useRecoilState(selectedChatAtom);
+  const selectedChat = useRecoilValue(selectedChatAtom);
   const [chats, setChats] = useRecoilState(chatsAtom);
+  console.log("🚀 ~ MessageInput ~ chats:", chats)
   
   const showToast = useShowToast();
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { onClose } = useDisclosure();
 
   const { handleImgChange, imgUrl, setImgUrl } = usePreviewImg();
   const imageRef = useRef<any>(null)
 
   const [loading, setLoading] = useState(false);
+  console.log("🚀 ~ MessageInput ~ loading:", loading)
   const [text, setText] = useState("");
   const [isSending, setIsSending] = useState(false);
 

@@ -46,7 +46,7 @@ const SettingsPage = () => {
     <>
     <Text my={1} fontWeight={'bold'}>Deactivate Account</Text>
     <Text my={1}>You can activate your account anytime by logging in.</Text>
-    <Button size={'sm'} colorScheme='red' onClick={deactivateAccount}>Deactivate</Button>
+    <Button size={'sm'} colorScheme='red' onClick={deactivateAccount} isLoading={loading}>Deactivate</Button>
     </>
   )
 }

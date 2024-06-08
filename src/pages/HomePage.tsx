@@ -1,5 +1,5 @@
-import { Box, Flex, Link, Spinner, Text } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { Box, Flex, Spinner } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import useShowToast from "../hooks/useShowToast";
 import Post from "../components/Post";
 import SuggestedUsers from "../components/SuggestedUsers";

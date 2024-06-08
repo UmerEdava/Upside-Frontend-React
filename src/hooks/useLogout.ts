@@ -1,4 +1,3 @@
-import React from 'react'
 import { useSetRecoilState } from 'recoil';
 import userAtom from '../atoms/userAtom';
 import useShowToast from './useShowToast';

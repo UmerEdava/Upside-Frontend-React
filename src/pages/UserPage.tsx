@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import UserHeader from "../components/UserHeader";
-import UserPost from "../components/UserPost";
 import { useParams } from "react-router-dom";
 import { Flex, Spinner, Text } from "@chakra-ui/react";
 import useShowToast from "../hooks/useShowToast";

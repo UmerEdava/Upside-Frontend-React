@@ -1,10 +1,7 @@
-import React from "react";
 import { useSetRecoilState } from "recoil";
 import userAtom from "../atoms/userAtom";
 import useShowToast from "../hooks/useShowToast";
 import { Button } from "@chakra-ui/react";
-import { Navigate } from "react-router-dom";
-import { RouteNames } from "../routes";
 
 const LogoutButton = () => {
   const setUser = useSetRecoilState(userAtom);

@@ -2,13 +2,11 @@ import { Avatar, Box, Flex, Image, Text } from "@chakra-ui/react";
 import { BsThreeDots } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import Actions from "./Actions";
-import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 
 function UserPost({ post }: { post: any }) {
-  const [liked, setLiked] = useState(false);
 
-  const { _id, likes, comments, img, text, postedBy, createdAt } = post;
+  const { _id, comments, img, text, postedBy, createdAt } = post;
 
   const navigate = useNavigate();
 
