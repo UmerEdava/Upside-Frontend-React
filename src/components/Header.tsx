@@ -8,12 +8,13 @@ import {
   InputGroup,
   InputRightElement,
   Link,
+  Spinner,
   Text,
   useColorMode,
   WrapItem,
 } from "@chakra-ui/react";
 import { useRecoilValue } from "recoil";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import userAtom from "../atoms/userAtom";
 import { RouteNames } from "../routes";
 import { AiFillHome } from "react-icons/ai";
@@ -22,8 +23,8 @@ import lightImg from "../assets/images/logo-light.png";
 import darkImg from "../assets/images/logo-dark.png";
 import useLogout from "../hooks/useLogout";
 import { BsFillChatQuoteFill } from "react-icons/bs";
-import { MdOutlineSettings, MdSearch } from "react-icons/md";
-import { useState } from "react";
+import { MdOutlineLogout, MdOutlineSettings, MdSearch } from "react-icons/md";
+import { useEffect, useRef, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import customFetch from "../api";
 import useShowToast from "../hooks/useShowToast";
@@ -37,23 +38,27 @@ function Header() {
 
   const showToast = useShowToast();
 
+  const navigate = useNavigate();
+
+  const searchBoxRef = useRef<any>(null);
+
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchKey, setSearchKey] = useState('');
+  const [searchKey, setSearchKey] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
-  console.log("🚀 ~ Header ~ searchLoading:", searchLoading)
+  console.log("🚀 ~ Header ~ searchLoading:", searchLoading);
   const [loadingChat, setLoadingChats] = useState(false);
-  console.log("🚀 ~ Header ~ loadingChat:", loadingChat)
-  const [searchResult, setSearchResult] = useState<any>([])
+  console.log("🚀 ~ Header ~ loadingChat:", loadingChat);
+  const [searchResult, setSearchResult] = useState<any>([]);
+  const [searchComplete, setSearchComplete] = useState(false);
 
   const handleSearchUsers = async (e: any) => {
     e.preventDefault();
     try {
-
-      if(!searchKey) return
+      if (!searchKey) return;
 
       setSearchLoading(true);
       setLoadingChats(true);
-      
+
       // Fetch chats
       const res = await customFetch(`/api/v1/user/search/${searchKey}`, {
         method: "GET",
@@ -70,7 +75,7 @@ function Header() {
 
       // setSearchUsers(data?.data);
       setSearchResult(data?.data);
-      setSearchKey('');
+      setSearchComplete(true);
     } catch (error) {
       return showToast("Error", "Something went wrong", "error", 3000, false);
     } finally {
@@ -78,6 +83,25 @@ function Header() {
       setLoadingChats(false);
     }
   };
+
+  const handleCloseSearchBox = () => {
+    setIsSearchOpen(false);
+    setSearchKey("");
+    setSearchComplete(false);
+  };
+
+  const handleClickOutside = (event: any) => {
+    if (searchBoxRef.current && !searchBoxRef.current.contains(event.target)) {
+      handleCloseSearchBox();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <>
@@ -108,7 +132,11 @@ function Header() {
           <Flex alignItems={"center"} gap={3}>
             <MdSearch
               size={24}
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              onClick={() => {
+                setIsSearchOpen(!isSearchOpen);
+                setSearchKey("");
+                setSearchComplete(false);
+              }}
               cursor={"pointer"}
             />
 
@@ -128,26 +156,40 @@ function Header() {
             </Link>
 
             <Button size={"sm"} onClick={logout}>
-              Logout
+              {/* Logout */}
+              <MdOutlineLogout size={20} />
             </Button>
           </Flex>
         )}
       </Flex>
 
       {isSearchOpen && (
-        <Box mb={12} id="overlay" className="overlay" w={{
-          base: '22rem',
-          md: '37rem'
-        }}>
-          <InputGroup>
-            <Input w={"full"} placeholder="Search people..." value={searchKey} onChange={(e) => setSearchKey(e.target.value)}/>
-            <InputRightElement>
-              <IoSearch cursor={"pointer"} onClick={handleSearchUsers}/>
-            </InputRightElement>
-          </InputGroup>
+        <Box
+          mb={12}
+          id="overlay"
+          className="overlay"
+          w={{
+            base: "22rem",
+            md: "37rem",
+          }}
+          ref={searchBoxRef}
+        >
+          <form onSubmit={handleSearchUsers}>
+            <InputGroup>
+              <Input
+                w={"full"}
+                placeholder="Search people..."
+                value={searchKey}
+                onChange={(e) => setSearchKey(e.target.value)}
+              />
+              <InputRightElement>
+                <IoSearch cursor={"pointer"} onClick={handleSearchUsers} />
+              </InputRightElement>
+            </InputGroup>
+          </form>
 
           <Flex direction={"column"} mt={2} maxH={"400px"} overflowY={"auto"}>
-            {searchResult.map((searchUser: any, i:any) => (
+            {searchResult.map((searchUser: any, i: any) => (
               <Box
                 h={10}
                 display={"flex"}
@@ -158,6 +200,13 @@ function Header() {
                 p={5}
                 pt={8}
                 pb={8}
+                onClick={() => {
+                  setIsSearchOpen(false);
+                  setSearchResult([]);
+                  navigate(`/${searchUser.username}`);
+                }}
+                cursor={"pointer"}
+                _hover={{ bg: "#1e1e1e" }}
               >
                 <WrapItem>
                   <Avatar
@@ -168,15 +217,41 @@ function Header() {
                     }}
                     name={searchUser?.username}
                     src={searchUser?.profilePic}
-                  >
-                  </Avatar>
+                  ></Avatar>
                 </WrapItem>
-                <Flex direction={'column'}>
-                <Text >{searchUser.username}</Text>
-                <Text fontSize={'12px'}>{searchUser.name}</Text>
+                <Flex direction={"column"}>
+                  <Text>{searchUser.username}</Text>
+                  <Text fontSize={"12px"} color={"gray.light"}>
+                    {searchUser.name}
+                  </Text>
                 </Flex>
               </Box>
             ))}
+
+            {searchComplete && searchResult.length === 0 && (
+              <Box
+                h={10}
+                display={"flex"}
+                alignItems={"center"}
+                border={"1px solid #66666654"}
+                gap={2}
+                p={5}
+                pt={8}
+                pb={8}
+                cursor={"pointer"}
+                _hover={{ bg: "#1e1e1e" }}
+              >
+                <Flex>
+                  <Text>No result found</Text>
+                </Flex>
+              </Box>
+            )}
+
+            {searchLoading && (
+              <Flex justifyContent={"center"} h={20} alignItems={"center"}>
+                <Spinner />
+              </Flex>
+            )}
           </Flex>
         </Box>
       )}
