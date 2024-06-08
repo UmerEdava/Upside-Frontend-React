@@ -39,7 +39,7 @@ export default function LoginPage() {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/v1/auth/login", {
+      const res = await fetch("https://upside-backend-node.onrender.com/api/v1/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
