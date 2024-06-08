@@ -40,6 +40,7 @@ function Post({ post, refetchPosts }: { post: any, refetchPosts: any }) {
           }
         })
         .catch((error) => {
+          console.log("error:", error)
           showToast("Error", "Something went wrong", "error", 3000, false);
           setIsDeleting(false);
         });
