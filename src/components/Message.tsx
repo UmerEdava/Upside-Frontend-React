@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import { selectedChatAtom } from "../atoms/messagesAtom";
 import userAtom from "../atoms/userAtom";
-import { BsCheck2All, BsClock } from "react-icons/bs";
+import { BsCheck2All } from "react-icons/bs";
 
 const Message = ({
   message,

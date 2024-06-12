@@ -16,7 +16,8 @@ export const SocketContextProvider = ({ children }: any) => {
   const currentUser = useRecoilValue(userAtom);
 
   useEffect(() => {
-    const socket = io("http://localhost:3333", {
+    // https://upside-backend-node.onrender.com
+    const socket = io("https://upside-backend-node.onrender.com", {
       query: {
         userId: currentUser?._id,
       },
