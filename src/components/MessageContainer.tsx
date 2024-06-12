@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import Message from "./Message";
 import MessageInput from "./MessageInput";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { chatsAtom, selectedChatAtom } from "../atoms/messagesAtom";
 import { useEffect, useRef, useState } from "react";
 import useShowToast from "../hooks/useShowToast";
@@ -29,8 +29,7 @@ const MessageContainer = () => {
   
   const selectedChat = useRecoilValue(selectedChatAtom);
   const currentUser = useRecoilValue(userAtom);
-  const [chats, setChats] = useRecoilState(chatsAtom);
-  console.log("🚀 ~ MessageContainer ~ chats:", chats)
+  const setChats = useSetRecoilState(chatsAtom);
 
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [messages, setMessages] = useState<any>([]);
@@ -70,6 +69,8 @@ const MessageContainer = () => {
 
   useEffect(() => {
     socket.on("newMessage", (newMessage: any) => {
+      console.log("newMessage come:", newMessage)
+      console.log("🚀 ~ socket.on ~ selectedChat:", selectedChat)
       if (selectedChat?._id == newMessage.chatId) {
         setMessages((prevMessages: any) => [...prevMessages, newMessage]);
       }

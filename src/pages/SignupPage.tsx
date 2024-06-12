@@ -88,7 +88,7 @@ export default function SignupPage() {
       setUser(data?.data);
 
     } catch (error) {
-      console.log('in errror',error);
+      console.log('error: ',error);
       showToast("Error", "Something went wrong", "error", 3000, false);
     } finally {
       setLoading(false);

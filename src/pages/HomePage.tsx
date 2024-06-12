@@ -27,7 +27,6 @@ const HomePage = () => {
         return showToast("Error", data.message, "error", 3000, false);
       }
 
-      console.log("🚀 ~ fetchFeedPosts ~ data?.data?.feedPosts:", data?.data?.feedPosts)
       setFeedPosts(data?.data?.feedPosts);
     } catch (error) {
       return showToast("Error", "Something went wrong", "error", 3000, false);

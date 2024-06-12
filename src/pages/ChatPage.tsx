@@ -46,7 +46,6 @@ const ChatPage = () => {
         return showToast("Error", data.message, "error", 3000, false);
       }
 
-      console.log("🚀 ~ fetchFeedPosts ~ data?.data?.feedPosts:", data?.data);
       setChats(data?.data?.chats);
     } catch (error) {
       return showToast("Error", "Something went wrong", "error", 3000, false);
@@ -117,7 +116,6 @@ const ChatPage = () => {
     socket?.on("newMessage", (newMessage: any) => {
       setChats((prevChats: any) => {
         const updatedChats = prevChats.map((chat: any) => {
-          console.log('jk',chat?.unSeenCount)
           if (chat._id === newMessage?.chatId) {
             return {
               ...chat,

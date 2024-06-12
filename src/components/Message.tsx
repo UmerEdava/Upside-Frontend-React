@@ -3,13 +3,13 @@ import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import { selectedChatAtom } from "../atoms/messagesAtom";
 import userAtom from "../atoms/userAtom";
-import { BsCheck2All } from "react-icons/bs";
+import { BsCheck2All, BsClock } from "react-icons/bs";
 
 const Message = ({
   message,
   ownMessage,
 }: {
-  message: { text: string, img: string, seen: boolean };
+  message: { text: string, img: string, seen: boolean, status: string };
   ownMessage: boolean;
 }) => {
   const selectedChat = useRecoilValue(selectedChatAtom);
@@ -24,11 +24,12 @@ const Message = ({
 
           {message?.text && (
             <Flex maxW={"350px"} bg={"green.800"} p={1} borderRadius={"md"}>
-            <Text color={"white"}>{message?.text}</Text>
-            <Box alignSelf={'flex-end'} ml={1} color={message?.seen ? "blue.400" : ""} fontWeight={'bold'}>
-              <BsCheck2All size={16}/>
-            </Box>
-          </Flex>
+              <Text color={"white"}>{message?.text}</Text>
+              <Box alignSelf={'flex-end'} ml={1} color={message?.seen ? "blue.400" : ""} fontWeight={'bold'}>
+                <BsCheck2All size={16}/>
+                {/* <BsClock size={10} color="#b6b6b6"/> */}
+              </Box>
+            </Flex>
           )}
 
           {message?.img && !isImageLoaded && (

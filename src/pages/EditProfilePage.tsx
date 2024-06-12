@@ -67,7 +67,6 @@ export default function EditProfilePage(): JSX.Element {
       });
 
       const data = await res.json();
-      console.log("🚀 ~ handleSubmit ~ data:", data);
 
       if (data?.error) {
         return showToast("Error", data.message, "error", 3000, false);

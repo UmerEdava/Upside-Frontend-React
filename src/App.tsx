@@ -18,7 +18,6 @@ import SettingsPage from "./pages/SettingsPage";
 function App() {
 
   const user = useRecoilValue(userAtom);
-  console.log("🚀 ~ App ~ user:", user)
 
   return (
     <>

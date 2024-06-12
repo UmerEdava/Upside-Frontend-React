@@ -45,9 +45,7 @@ function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchKey, setSearchKey] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
-  console.log("🚀 ~ Header ~ searchLoading:", searchLoading);
-  const [loadingChat, setLoadingChats] = useState(false);
-  console.log("🚀 ~ Header ~ loadingChat:", loadingChat);
+  // const [loadingChat, setLoadingChats] = useState(false);
   const [searchResult, setSearchResult] = useState<any>([]);
   const [searchComplete, setSearchComplete] = useState(false);
 
@@ -57,7 +55,7 @@ function Header() {
       if (!searchKey) return;
 
       setSearchLoading(true);
-      setLoadingChats(true);
+      // setLoadingChats(true);
 
       // Fetch chats
       const res = await customFetch(`/api/v1/user/search/${searchKey}`, {
@@ -80,7 +78,7 @@ function Header() {
       return showToast("Error", "Something went wrong", "error", 3000, false);
     } finally {
       setSearchLoading(false);
-      setLoadingChats(false);
+      // setLoadingChats(false);
     }
   };
 

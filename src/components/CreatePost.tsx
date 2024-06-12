@@ -97,7 +97,6 @@ const handleCreatePost = async () => {
       setInputs({ text: "" });
       setImgUrl("");
 
-      console.log("🚀 ~ handleCreatePost ~ data?.data:", data?.data)
       setPosts([data?.data, ...posts]);
 
       onClose();

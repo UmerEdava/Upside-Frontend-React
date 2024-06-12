@@ -2,17 +2,19 @@ import { Flex, Image, Input, InputGroup, InputRightElement, Modal, ModalBody, Mo
 import { IoSendSharp } from "react-icons/io5";
 import useShowToast from "../hooks/useShowToast";
 import { useRef, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { chatsAtom, selectedChatAtom } from "../atoms/messagesAtom";
 import { BsFillImageFill } from "react-icons/bs";
 import usePreviewImg from "../hooks/usePreviewImg";
 import customFetch from "../api";
+import userAtom from "../atoms/userAtom";
 
 const MessageInput = ({ setMessages }: { setMessages: any }) => {
 
   const selectedChat = useRecoilValue(selectedChatAtom);
-  const [chats, setChats] = useRecoilState(chatsAtom);
-  console.log("🚀 ~ MessageInput ~ chats:", chats)
+  const setChats = useSetRecoilState(chatsAtom);
+  const currentUser = useRecoilValue(userAtom);
+
   
   const showToast = useShowToast();
 
@@ -21,15 +23,14 @@ const MessageInput = ({ setMessages }: { setMessages: any }) => {
   const { handleImgChange, imgUrl, setImgUrl } = usePreviewImg();
   const imageRef = useRef<any>(null)
 
-  const [loading, setLoading] = useState(false);
-  console.log("🚀 ~ MessageInput ~ loading:", loading)
+  // const [loading, setLoading] = useState(false);
   const [text, setText] = useState("");
   const [isSending, setIsSending] = useState(false);
 
   const handleSendMessage = async (e: any) => {
     e.preventDefault();
     try {
-      setLoading(true);
+      // setLoading(true);
 
       if (!selectedChat?.userId) return;
 
@@ -39,6 +40,21 @@ const MessageInput = ({ setMessages }: { setMessages: any }) => {
 
 
       setIsSending(true)
+
+
+      const tempId = Date.now();
+
+      const tempMessage = {
+        _id: tempId,
+        chatId: selectedChat?._id,
+        ...(text && { text }),
+        ...(imgUrl && { img: imgUrl }),
+        sender: currentUser?._id, // or your user identifier
+        status: 'sending',
+      };
+
+      // Optimistically update the messages state
+      setMessages((prevMessages: any) => [...prevMessages, tempMessage]);
 
       // Calling send message API
       const res = await customFetch(`/api/v1/chat/messages`, {
@@ -59,7 +75,13 @@ const MessageInput = ({ setMessages }: { setMessages: any }) => {
         return showToast("Error", data.message, "error", 3000, false);
       }
 
-      setMessages((messages: any) => [...messages, data?.data ]);
+      setMessages((prevMessages: any) =>
+        prevMessages.map((msg: any) =>
+          msg.id === tempId ? { ...msg, id: data.data?.id, status: 'sent' } : msg
+        )
+      );
+
+      // setMessages((messages: any) => [...messages, data?.data ]);
 
       setChats((chats: any) => {
         return chats.map((chat: any) => {
@@ -83,7 +105,7 @@ const MessageInput = ({ setMessages }: { setMessages: any }) => {
       console.log("🚀 ~ handleSendMessage ~ error:", error)
       return showToast("Error", "Something went wrong", "error", 3000, false);
     } finally {
-      setLoading(false);
+      // setLoading(false);
       setIsSending(false);
     }
   };
