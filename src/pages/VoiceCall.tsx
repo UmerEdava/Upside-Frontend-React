@@ -15,7 +15,7 @@ const VoiceCall = () => {
       setClient(rtcClient);
 
       // Fetch token from your server
-      const response = await fetch(`http://localhost:3333/api/v1/chat/agora-token?channelName=${channelName}&uid=0`, {
+      const response = await fetch(`https://upside-backend-node.onrender.com/api/v1/chat/agora-token?channelName=${channelName}&uid=0`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
