@@ -14,6 +14,7 @@ import CreatePost from "./components/CreatePost";
 import HomePage from "./pages/HomePage";
 import ChatPage from "./pages/ChatPage";
 import SettingsPage from "./pages/SettingsPage";
+import VoiceCall from "./pages/VoiceCall";
 
 function App() {
 
@@ -52,6 +53,8 @@ function App() {
         <Route path="/profile/edit" element={user && Object.keys(user).length > 0 ? <Container maxW={"620px"}><EditProfilePage /></Container> : <Navigate to={RouteNames.login.path}/>}/>
         <Route path="/chat" element={user && Object.keys(user).length > 0 ? <Container maxW={"620px"}><ChatPage /></Container> : <Navigate to={RouteNames.login.path}/>}/>
         <Route path="/settings" element={user && Object.keys(user).length > 0 ? <Container maxW={"620px"}><SettingsPage /></Container> : <Navigate to={RouteNames.login.path}/>}/>
+
+        <Route path="/call" element={user && Object.keys(user).length > 0 ? <Container maxW={"620px"}><VoiceCall /></Container> : <Navigate to={RouteNames.login.path}/>}/>
 
         
       </Routes>
