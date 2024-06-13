@@ -16,15 +16,19 @@ import ChatPage from "./pages/ChatPage";
 import SettingsPage from "./pages/SettingsPage";
 import VoiceCall from "./pages/VoiceCall";
 import VideoCallPage from "./pages/VideoCallPage";
+import VideoCallPage2 from "./pages/VideoCallPage2";
+import { callAtom } from "./atoms/callAtom";
 
 function App() {
 
   const user = useRecoilValue(userAtom);
 
+  const isCall = useRecoilValue(callAtom);
+
   return (
     <>
     <Box position={'relative'} w={'full'}>
-      {user && Object.keys(user).length > 0 ? <Container maxW={"620px"}><Header /></Container> : <Header />}
+      {!isCall && <>{user && Object.keys(user).length > 0 ? <Container maxW={"620px"}><Header /></Container> : <Header />}</>}
       <Routes>
         <Route path="/register" element={!user || Object.keys(user).length === 0 ? <SignupPage /> : <Navigate to={RouteNames.home.path}/>} />
         <Route path="/login" element={!user || Object.keys(user).length === 0 ? <LoginPage /> : <Navigate to={RouteNames.home.path}/>} />
@@ -57,6 +61,8 @@ function App() {
 
         <Route path="/call" element={user && Object.keys(user).length > 0 ? <Container maxW={"620px"}><VoiceCall /></Container> : <Navigate to={RouteNames.login.path}/>}/>
         <Route path="/video-call" element={user && Object.keys(user).length > 0 ? <Container maxW={"620px"}><VideoCallPage /></Container> : <Navigate to={RouteNames.login.path}/>}/>
+        <Route path="/video2" element={user && Object.keys(user).length > 0 ? <VideoCallPage2 /> : <Navigate to={RouteNames.login.path}/>}/>
+
 
 
         
