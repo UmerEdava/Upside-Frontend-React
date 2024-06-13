@@ -47,3 +47,19 @@
   max-width: 500px;
   text-align: center;
 }
+
+#local {
+  width: 300px;
+  height: 300px;
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  border: 1px solid #000;
+}
+
+.remote-video {
+  width: 300px;
+  height: 300px;
+  border: 1px solid #000;
+  margin: 10px;
+}

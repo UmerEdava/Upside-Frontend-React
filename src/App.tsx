@@ -15,6 +15,7 @@ import HomePage from "./pages/HomePage";
 import ChatPage from "./pages/ChatPage";
 import SettingsPage from "./pages/SettingsPage";
 import VoiceCall from "./pages/VoiceCall";
+import VideoCallPage from "./pages/VideoCallPage";
 
 function App() {
 
@@ -55,6 +56,8 @@ function App() {
         <Route path="/settings" element={user && Object.keys(user).length > 0 ? <Container maxW={"620px"}><SettingsPage /></Container> : <Navigate to={RouteNames.login.path}/>}/>
 
         <Route path="/call" element={user && Object.keys(user).length > 0 ? <Container maxW={"620px"}><VoiceCall /></Container> : <Navigate to={RouteNames.login.path}/>}/>
+        <Route path="/video-call" element={user && Object.keys(user).length > 0 ? <Container maxW={"620px"}><VideoCallPage /></Container> : <Navigate to={RouteNames.login.path}/>}/>
+
 
         
       </Routes>

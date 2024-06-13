@@ -5,41 +5,57 @@ const APP_ID = '8288b6e09055465e851d526cd75b676a';
 
 const VoiceCall = () => {
   const [client, setClient] = useState<any>(null);
-  const [channelName, setChannelName] = useState('test1');
-  console.log("🚀 ~ VoiceCall ~ setChannelName:", setChannelName)
-  const [token, setToken] = useState(null);
+  const [joined, setJoined] = useState(false);
 
   useEffect(() => {
-    const initClient = async () => {
-      const rtcClient = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
-      setClient(rtcClient);
-
-      // Fetch token from your server
-      const response = await fetch(`https://upside-backend-node.onrender.com/api/v1/chat/agora-token?channelName=${channelName}&uid=0`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-      });
-      const data = await response.json();
-      setToken(data?.data?.token);
-    };
-
-    initClient();
-  }, [channelName]);
+      const initAgora = async () => {
+          const agoraClient = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
+          setClient(agoraClient);
+      };
+      initAgora();
+  }, []);
 
   const joinChannel = async () => {
-    await client.join(APP_ID, channelName, token, null);
-    const localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-    await client.publish([localAudioTrack]);
-    console.log('Published local audio track');
+    //   const uid = Math.floor(Math.random() * 10000);
+      const uid = 0
+      const channelName = 'test1';
+
+      const response = await fetch(`https://upside-backend-node.onrender.com/api/v1/chat/agora-token?channelName=${channelName}&uid=${uid}`, {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          credentials: 'include'
+      });
+
+      const data = await response.json();
+
+      const token = data?.data?.token;
+
+      await client.join(APP_ID, channelName, token, uid);
+
+      client.on('user-published', async (user: any, mediaType: any) => {
+          await client.subscribe(user, mediaType);
+          if (mediaType === 'audio') {
+              user.audioTrack.play();
+          }
+      });
+
+      setJoined(true);
+  };
+
+  const leaveChannel = async () => {
+      await client.leave();
+      setJoined(false);
   };
 
   return (
     <div>
-      <button onClick={joinChannel}>Join Voice Call</button>
-    </div>
+            <h1>Agora Voice Call</h1>
+            <button onClick={joined ? leaveChannel : joinChannel}>
+                {joined ? 'Leave' : 'Join'} Call
+            </button>
+        </div>
   );
 };
 
