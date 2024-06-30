@@ -81,7 +81,10 @@ const MessageInput = ({ setMessages, setCurrentUserSend }: { setMessages: any, s
 
       console.log("🚀 ~ handleSendMessage ~ tempId:", tempId)
       
-      setCurrentUserSend(true)
+      if (setCurrentUserSend) {
+
+        setCurrentUserSend(true)
+      }
       setMessages((prevMessages: any) =>
         prevMessages.map((msg: any) => 
           msg._id === tempId ? { ...msg, id: data.data?.id, status: MESSAGE_STATUS_TYPES.SENT } : msg
