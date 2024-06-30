@@ -3,7 +3,8 @@ import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import { selectedChatAtom } from "../atoms/messagesAtom";
 import userAtom from "../atoms/userAtom";
-import { BsCheck2All } from "react-icons/bs";
+import { BsCheck2All, BsClock } from "react-icons/bs";
+import { MESSAGE_STATUS_TYPES } from "../types/messageTypes";
 
 const Message = ({
   message,
@@ -26,8 +27,8 @@ const Message = ({
             <Flex maxW={"350px"} bg={"green.800"} p={1} borderRadius={"md"}>
               <Text color={"white"}>{message?.text}</Text>
               <Box alignSelf={'flex-end'} ml={1} color={message?.seen ? "blue.400" : ""} fontWeight={'bold'}>
-                <BsCheck2All size={16}/>
-                {/* <BsClock size={10} color="#b6b6b6"/> */}
+                {message?.status === MESSAGE_STATUS_TYPES.SENT  && (<BsCheck2All size={16}/>)}
+                {message?.status === MESSAGE_STATUS_TYPES.PENDING && (<BsClock size={10} color="#b6b6b6"/>)}
               </Box>
             </Flex>
           )}

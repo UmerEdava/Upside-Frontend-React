@@ -132,7 +132,9 @@ const ChatPage = () => {
         return updatedChats       
       })
     })
-  }, [socket, setChats])
+
+    return () => socket?.off("newMessage")
+  }, [socket, selectedChat, setChats])
 
   
 

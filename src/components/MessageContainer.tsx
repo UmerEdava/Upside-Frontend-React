@@ -20,24 +20,26 @@ import messageNotificationSound from "../assets/audio/message-notification.mp3";
 import customFetch from "../api";
 import { RouteNames } from "../routes";
 import { Link as RouterLink } from "react-router-dom";
+import { FaPhoneAlt } from "react-icons/fa";
+import { FiVideo } from "react-icons/fi";
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 const MessageContainer = () => {
   const showToast = useShowToast();
-  const {socket} = useSocket();
-  
+  const { socket } = useSocket();
+
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  
+
   const selectedChat = useRecoilValue(selectedChatAtom);
   const currentUser = useRecoilValue(userAtom);
   const setChats = useSetRecoilState(chatsAtom);
 
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [messages, setMessages] = useState<any>([]);
-  
   const fetchMessages = async () => {
     try {
-      
-      if (!selectedChat?._id) return
+
+      if (!selectedChat?._id) return;
 
       if (selectedChat?.notChatted) {
         setMessages([]);
@@ -46,12 +48,15 @@ const MessageContainer = () => {
 
       setLoadingMessages(true);
       // Fetch chats
-      const res = await customFetch(`/api/v1/chat/${selectedChat?._id}/messages`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await customFetch(
+        `/api/v1/chat/${selectedChat?._id}/messages`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       const data = await res.json();
 
@@ -69,13 +74,11 @@ const MessageContainer = () => {
 
   useEffect(() => {
     socket.on("newMessage", (newMessage: any) => {
-      console.log("newMessage come:", newMessage)
-      console.log("🚀 ~ socket.on ~ selectedChat:", selectedChat)
       if (selectedChat?._id == newMessage.chatId) {
         setMessages((prevMessages: any) => [...prevMessages, newMessage]);
       }
 
-      if(!document.hasFocus()) {
+      if (!document.hasFocus()) {
         const audio = new Audio(messageNotificationSound);
         audio.play();
       }
@@ -86,30 +89,33 @@ const MessageContainer = () => {
             return {
               ...chat,
               lastMessage: {
-                text: newMessage.text,
-                sender: newMessage.sender,
+                text: newMessage?.text,
+                sender: newMessage?.sender,
               },
-              ...(selectedChat?._id != chat?._id && { unSeenCount: chat.unSeenCount + 1 }),
+              ...(selectedChat?._id != chat?._id && {
+                unSeenCount: chat.unSeenCount + 1,
+              }),
             };
           }
           return chat;
-        }) 
-        return updatedChats       
-      })
+        });
+        return updatedChats;
+      });
+    });
 
-    })
-
-    return () => socket.off("newMessage")
-  }, [socket, selectedChat, setChats])
+    return () => socket.off("newMessage");
+  }, [socket, selectedChat, setChats]);
 
   useEffect(() => {
-    const lastMessageFromOtherUser = messages?.length && messages[messages.length - 1].sender != currentUser?._id
+    const lastMessageFromOtherUser =
+      messages?.length &&
+      messages[messages.length - 1]?.sender != currentUser?._id;
 
     if (lastMessageFromOtherUser) {
       socket.emit("markMessagesAsSeen", {
         chatId: selectedChat._id,
-        userId: selectedChat.userId
-      })
+        userId: selectedChat.userId,
+      });
 
       setChats((prevChats: any) => {
         const updatedChats = prevChats.map((chat: any) => {
@@ -118,36 +124,36 @@ const MessageContainer = () => {
               ...chat,
               lastMessage: {
                 ...chat.lastMessage,
-                seen: true
+                seen: true,
               },
-              unSeenCount: 0
-            }
+              unSeenCount: 0,
+            };
           }
           return chat;
-        }) 
-        return updatedChats       
-      })
+        });
+        return updatedChats;
+      });
     }
 
-    socket.on("seenMessages", ({chatId}: any) => {
+    socket.on("seenMessages", ({ chatId }: any) => {
       if (selectedChat?._id == chatId) {
         setMessages((prevMessages: any) => {
           const updatedMessages = prevMessages.map((message: any) => {
-            if (!message.seen) {
+            if (!message?.seen) {
               return {
                 ...message,
-                seen: true
+                seen: true,
               };
             }
             return message;
-          }) 
-          return updatedMessages       
-        })
+          });
+          return updatedMessages;
+        });
       }
-    })
+    });
 
     // return () => socket.off("messagesSeen")
-  }, [socket, currentUser?._id, messages, selectedChat])
+  }, [socket, currentUser?._id, messages, selectedChat]);
 
   useEffect(() => {
     fetchMessages();
@@ -155,7 +161,7 @@ const MessageContainer = () => {
 
   useEffect(() => {
     if (bottomRef?.current) {
-      bottomRef.current.scrollIntoView({ behavior: 'auto' });
+      bottomRef.current.scrollIntoView({ behavior: "auto" });
     }
   }, [messages]);
 
@@ -170,10 +176,33 @@ const MessageContainer = () => {
       {/* Header */}
       <Flex w={"full"} h={12} alignItems={"center"} gap={2}>
         <Avatar src={selectedChat?.profilePic} size={"sm"} />
-        <Link as={RouterLink} to={RouteNames.home.path + `${selectedChat?.username}`} display={"flex"} alignItems={"center"} _hover={{ textDecoration: "none" }}>
+        <Link
+          as={RouterLink}
+          to={RouteNames.home.path + `${selectedChat?.username}`}
+          display={"flex"}
+          alignItems={"center"}
+          _hover={{ textDecoration: "none" }}
+        >
           {selectedChat?.username}
           <Image src={"/verified.png"} w={4} h={4} ml={1} />
         </Link>
+
+        {/* video and audio call buttons at the last of this header */}
+        <Flex gap={5} alignItems={"center"} ml={"auto"}>
+          <Link
+            as={RouterLink}
+            to={RouteNames.home.path + `video2`}
+            display={"flex"}
+            alignItems={"center"}
+            _hover={{ textDecoration: "none" }}
+          >
+            <FiVideo size={20} />
+          </Link>
+
+          <FaPhoneAlt size={18} />
+
+          <BsThreeDotsVertical size={20} />
+        </Flex>
       </Flex>
 
       <Divider />
@@ -217,10 +246,12 @@ const MessageContainer = () => {
             />
           ))}
 
-          <div ref={bottomRef} />
+        <div ref={bottomRef} />
       </Flex>
 
-      <MessageInput setMessages={setMessages}/>
+      <MessageInput
+        setMessages={setMessages}
+      />
     </Flex>
   );
 };

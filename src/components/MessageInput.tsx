@@ -8,8 +8,9 @@ import { BsFillImageFill } from "react-icons/bs";
 import usePreviewImg from "../hooks/usePreviewImg";
 import customFetch from "../api";
 import userAtom from "../atoms/userAtom";
+import { MESSAGE_STATUS_TYPES } from "../types/messageTypes";
 
-const MessageInput = ({ setMessages }: { setMessages: any }) => {
+const MessageInput = ({ setMessages, setCurrentUserSend }: { setMessages: any, setCurrentUserSend?: any }) => {
 
   const selectedChat = useRecoilValue(selectedChatAtom);
   const setChats = useSetRecoilState(chatsAtom);
@@ -26,6 +27,7 @@ const MessageInput = ({ setMessages }: { setMessages: any }) => {
   // const [loading, setLoading] = useState(false);
   const [text, setText] = useState("");
   const [isSending, setIsSending] = useState(false);
+
 
   const handleSendMessage = async (e: any) => {
     e.preventDefault();
@@ -50,11 +52,13 @@ const MessageInput = ({ setMessages }: { setMessages: any }) => {
         ...(text && { text }),
         ...(imgUrl && { img: imgUrl }),
         sender: currentUser?._id, // or your user identifier
-        status: 'sending',
+        status: MESSAGE_STATUS_TYPES.PENDING,
       };
 
       // Optimistically update the messages state
       setMessages((prevMessages: any) => [...prevMessages, tempMessage]);
+
+      setText('');
 
       // Calling send message API
       const res = await customFetch(`/api/v1/chat/messages`, {
@@ -75,9 +79,12 @@ const MessageInput = ({ setMessages }: { setMessages: any }) => {
         return showToast("Error", data.message, "error", 3000, false);
       }
 
+      console.log("🚀 ~ handleSendMessage ~ tempId:", tempId)
+      
+      setCurrentUserSend(true)
       setMessages((prevMessages: any) =>
-        prevMessages.map((msg: any) =>
-          msg.id === tempId ? { ...msg, id: data.data?.id, status: 'sent' } : msg
+        prevMessages.map((msg: any) => 
+          msg._id === tempId ? { ...msg, id: data.data?.id, status: MESSAGE_STATUS_TYPES.SENT } : msg
         )
       );
 
@@ -98,7 +105,6 @@ const MessageInput = ({ setMessages }: { setMessages: any }) => {
         });
       });
 
-      setText('');
       setImgUrl('');
 
     } catch (error) {
