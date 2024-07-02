@@ -17,7 +17,7 @@ export const SocketContextProvider = ({ children }: any) => {
 
   useEffect(() => {
     // https://upside-backend-node.onrender.com
-    const socket = io("http://localhost:3333", {
+    const socket = io("https://upside-backend-node.onrender.com", {
       query: {
         userId: currentUser?._id,
       },
