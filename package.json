@@ -17,6 +17,7 @@
     "agora-react-uikit": "^1.2.0",
     "agora-rtc-sdk-ng": "^4.21.0",
     "date-fns": "^3.6.0",
+    "firebase": "^10.12.2",
     "framer-motion": "^11.1.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

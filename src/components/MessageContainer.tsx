@@ -19,14 +19,18 @@ import { useSocket } from "../context/SocketContext";
 import messageNotificationSound from "../assets/audio/message-notification.mp3";
 import customFetch from "../api";
 import { RouteNames } from "../routes";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { FaPhoneAlt } from "react-icons/fa";
 import { FiVideo } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 
 const MessageContainer = () => {
+  
   const showToast = useShowToast();
+
   const { socket } = useSocket();
+
+  const navigate = useNavigate();
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -36,6 +40,7 @@ const MessageContainer = () => {
 
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [messages, setMessages] = useState<any>([]);
+  
   const fetchMessages = async () => {
     try {
 
@@ -68,7 +73,7 @@ const MessageContainer = () => {
     } catch (error) {
       return showToast("Error", "Something went wrong", "error", 3000, false);
     } finally {
-      setLoadingMessages(false);
+        setLoadingMessages(false);
     }
   };
 
@@ -162,8 +167,18 @@ const MessageContainer = () => {
   useEffect(() => {
     if (bottomRef?.current) {
       bottomRef.current.scrollIntoView({ behavior: "auto" });
+      console.log('scroll into view')
     }
   }, [messages]);
+
+  const startVideoCall = () => {
+    // generate a random 6 digit channelName
+    const channelName = Math.floor(Math.random() * 900000) + 100000;
+
+    socket.emit('call', { callerId: currentUser?._id, calleeId: selectedChat?.userId, channelName });
+
+    navigate(RouteNames.home.path + `video2/` + channelName);
+  }
 
   return (
     <Flex
@@ -190,11 +205,12 @@ const MessageContainer = () => {
         {/* video and audio call buttons at the last of this header */}
         <Flex gap={5} alignItems={"center"} ml={"auto"}>
           <Link
-            as={RouterLink}
-            to={RouteNames.home.path + `video2`}
+            // as={RouterLink}
+            // to={RouteNames.home.path + `video2/` + selectedChat?.userId}
             display={"flex"}
             alignItems={"center"}
             _hover={{ textDecoration: "none" }}
+            onClick={startVideoCall}
           >
             <FiVideo size={20} />
           </Link>

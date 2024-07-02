@@ -69,7 +69,7 @@ const Conversation = ({ chat, isOnline }: { chat: any; isOnline: boolean }) => {
         </Avatar>
       </WrapItem>
       <Stack direction={"column"} fontSize={"sm"}>
-        <Link as={RouterLink} to={RouteNames.home.path + `${user?.username}`} fontWeight={700} display={"flex"} alignItems={"center"} _hover={{ textDecoration: "none" }}>
+        <Link as={RouterLink} to={RouteNames.home.path + `${user?.username}`} fontWeight={700} display={"flex"} alignItems={"center"} >
           {user?.username} <Image src={"/verified.png"} w={4} h={4} ml={1} />
         </Link>
 
