@@ -23,9 +23,10 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { FaPhoneAlt } from "react-icons/fa";
 import { FiVideo } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { videoCallDetailsAtom } from "../atoms/callAtom";
+import { VIDEO_CALL_STATUS_TYPES } from "../types/callTypes";
 
 const MessageContainer = () => {
-  
   const showToast = useShowToast();
 
   const { socket } = useSocket();
@@ -38,12 +39,13 @@ const MessageContainer = () => {
   const currentUser = useRecoilValue(userAtom);
   const setChats = useSetRecoilState(chatsAtom);
 
+  const setVideoCallDetails = useSetRecoilState(videoCallDetailsAtom);
+
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [messages, setMessages] = useState<any>([]);
-  
+
   const fetchMessages = async () => {
     try {
-
       if (!selectedChat?._id) return;
 
       if (selectedChat?.notChatted) {
@@ -73,7 +75,7 @@ const MessageContainer = () => {
     } catch (error) {
       return showToast("Error", "Something went wrong", "error", 3000, false);
     } finally {
-        setLoadingMessages(false);
+      setLoadingMessages(false);
     }
   };
 
@@ -167,7 +169,7 @@ const MessageContainer = () => {
   useEffect(() => {
     if (bottomRef?.current) {
       bottomRef.current.scrollIntoView({ behavior: "auto" });
-      console.log('scroll into view')
+      console.log("scroll into view");
     }
   }, [messages]);
 
@@ -175,10 +177,37 @@ const MessageContainer = () => {
     // generate a random 6 digit channelName
     const channelName = Math.floor(Math.random() * 900000) + 100000;
 
-    socket.emit('call', { callerId: currentUser?._id, calleeId: selectedChat?.userId, channelName });
+    socket.emit("call", {
+      callerId: currentUser?._id,
+      calleeId: selectedChat?.userId,
+      channelName,
+      callerName: currentUser?.name,
+      callerUsername: currentUser?.username,
+      callerProfilePic: currentUser?.profilePic,
+      calleeName: selectedChat?.name,
+      calleeUsername: selectedChat?.username,
+      calleeProfilePic: selectedChat?.profilePic,
+      callStatus: VIDEO_CALL_STATUS_TYPES.RINGING,
+    });
+
+    setVideoCallDetails({
+      channelName: channelName.toString(),
+      callStatus: VIDEO_CALL_STATUS_TYPES.RINGING,
+
+      callerId: currentUser?._id,
+      calleeId: selectedChat?.userId,
+
+      callerName: currentUser?.name,
+      callerUsername: currentUser?.username,
+      callerProfilePic: currentUser?.profilePic,
+
+      calleeName: selectedChat?.name,
+      calleeUsername: selectedChat?.username,
+      calleeProfilePic: selectedChat?.profilePic,
+    });
 
     navigate(RouteNames.home.path + `video2/` + channelName);
-  }
+  };
 
   return (
     <Flex
@@ -265,9 +294,7 @@ const MessageContainer = () => {
         <div ref={bottomRef} />
       </Flex>
 
-      <MessageInput
-        setMessages={setMessages}
-      />
+      <MessageInput setMessages={setMessages} />
     </Flex>
   );
 };

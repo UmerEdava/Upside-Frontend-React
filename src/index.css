@@ -63,3 +63,43 @@
   border: 1px solid #000;
   margin: 10px;
 }
+
+.call-page {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+}
+
+.fullscreen-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Cover the entire container without stretching */
+  margin: 0; /* Remove default margins */
+  padding: 0; /* Remove default padding */
+}
+
+.caller-info {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  /* background-color: rgb(137 80 168 / 80%);  */
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-align: center;
+  z-index: 1;
+}
+
+.action-buttons {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 1;
+}

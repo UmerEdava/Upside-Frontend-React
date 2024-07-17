@@ -42,6 +42,7 @@ const Conversation = ({ chat, isOnline }: { chat: any; isOnline: boolean }) => {
         setSelectedChat({
           _id: chat?._id,
           userId: user?._id,
+          name: user?.name,
           username: user?.username,
           profilePic: user?.profilePic,
           notChatted: chat?.notChatted,

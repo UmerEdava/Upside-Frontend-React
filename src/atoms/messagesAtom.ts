@@ -10,6 +10,7 @@ export const selectedChatAtom = atom({
 	default: {
         _id: "",
         userId: "",
+        name: "",
         username: "",
         profilePic: "",
         notChatted: null

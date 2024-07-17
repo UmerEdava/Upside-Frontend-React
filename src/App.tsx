@@ -5,7 +5,7 @@ import PostPage from "./pages/PostPage";
 import Header from "./components/Header";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import userAtom from "./atoms/userAtom";
 import { RouteNames } from "./routes";
 // import LogoutButton from "./components/LogoutButton";
@@ -17,18 +17,22 @@ import SettingsPage from "./pages/SettingsPage";
 import VoiceCall from "./pages/VoiceCall";
 import VideoCallPage from "./pages/VideoCallPage";
 import VideoCallPage2 from "./pages/VideoCallPage2";
-import { callAtom, incomingCallAtom } from "./atoms/callAtom";
+import {
+  callAtom,
+  incomingCallAtom,
+  videoCallDetailsAtom,
+} from "./atoms/callAtom";
 import { initializeApp } from "firebase/app";
 // import { getAnalytics } from "firebase/analytics";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { useEffect, useState } from "react";
 import { useSocket } from "./context/SocketContext";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
-
   const user = useRecoilValue(userAtom);
-  const [ringing, setRingingAtom] = useRecoilState(incomingCallAtom);
-  console.log("🚀 ~ App ~ ringing:", ringing)
+  const setRingingAtom = useSetRecoilState(incomingCallAtom);
+  const setVideoCallDetails = useSetRecoilState(videoCallDetailsAtom);
 
   const isCall = useRecoilValue(callAtom);
 
@@ -37,8 +41,8 @@ function App() {
   const navigate = useNavigate();
 
   // const [ringing, setRinging] = useState(false)
-  const [callerId, setCallerId] = useState('')
-  console.log("🚀 ~ App ~ callerId:", callerId)
+  const [callerId, setCallerId] = useState("");
+  console.log("🚀 ~ App ~ callerId:", callerId);
 
   // @@@ FIREBASE SETUP STARTS >>
   const firebaseConfig = {
@@ -48,11 +52,12 @@ function App() {
     storageBucket: "upside-5b959.appspot.com",
     messagingSenderId: "647791960831",
     appId: "1:647791960831:web:e84771b4192ec3366ba2ca",
-    measurementId: "G-SQBDFPZ0YP"
+    measurementId: "G-SQBDFPZ0YP",
   };
 
   // const privateVapidKey = 'YagiZj6T5YoRz5pUoF3pt4sI2P55-09AX_BNmSYZe4A'
-  const vapidKey = 'BOl8oTWmorynN5o8KmKsGHnpc5Gz3vxOBW09VEHifycOjvI56P0RCs3eB7lIFlfPbOV6jvDMiPC4P948yqiiVBg'
+  const vapidKey =
+    "BOl8oTWmorynN5o8KmKsGHnpc5Gz3vxOBW09VEHifycOjvI56P0RCs3eB7lIFlfPbOV6jvDMiPC4P948yqiiVBg";
 
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
@@ -60,96 +65,292 @@ function App() {
   const messaging = getMessaging(app);
 
   // Service Worker
-  navigator.serviceWorker.register('/firebase-messaging-sw.js').then((registration) => {
-    console.log("🚀 ~ navigator.serviceWorker.register ~ registration:", registration)
-    // messaging.useServiceWorker(registration);
-  
-    getToken(messaging, { vapidKey }).then((currentToken: any) => {
-      if (currentToken) {
-        console.log('FCM Token:', currentToken);
-        // Send the token to your server and update the UI if necessary
-      } else {
-        console.log('No registration token available. Request permission to generate one.');
-      }
-    }).catch((err: any) => {
-      console.log('An error occurred while retrieving token. ', err);
+  navigator.serviceWorker
+    .register("/firebase-messaging-sw.js")
+    .then((registration) => {
+      console.log(
+        "🚀 ~ navigator.serviceWorker.register ~ registration:",
+        registration
+      );
+      // messaging.useServiceWorker(registration);
+
+      getToken(messaging, { vapidKey })
+        .then((currentToken: any) => {
+          if (currentToken) {
+            console.log("FCM Token:", currentToken);
+            // Send the token to your server and update the UI if necessary
+          } else {
+            console.log(
+              "No registration token available. Request permission to generate one."
+            );
+          }
+        })
+        .catch((err: any) => {
+          console.log("An error occurred while retrieving token. ", err);
+        });
+
+      onMessage(messaging, (payload) => {
+        console.log("Message received. ", payload);
+        // Handle incoming message while app is in the foreground
+      });
+    })
+    .catch((err) => {
+      console.log("Service Worker registration failed: ", err);
     });
-  
-    onMessage(messaging, (payload) => {
-      console.log('Message received. ', payload);
-      // Handle incoming message while app is in the foreground
-    });
-  }).catch((err) => {
-    console.log('Service Worker registration failed: ', err);
-  });
 
   // @@@ FIREBASE SETUP ENDS >>
 
-
   useEffect(() => {
-    socket?.on('incomingCall', ({ callerId, channelName }: { callerId: string, channelName: string }) => {
-      console.log('incoming call from', callerId, channelName);
-      setCallerId(callerId);
-      setRingingAtom(true);
+    socket?.on(
+      "incomingCall",
+      ({
+        channelName,
+        callStatus,
+        callerId,
+        calleeId,
+        callerName,
+        callerUsername,
+        callerProfilePic,
+        calleeName,
+        calleeUsername,
+        calleeProfilePic,
+      }: {
+        channelName: string;
+        callStatus: string;
+        callerId: string;
+        calleeId: string;
+        callerName: string;
+        callerUsername: string;
+        callerProfilePic: string;
+        calleeName: string;
+        calleeUsername: string;
+        calleeProfilePic: string;
+      }) => {
+        console.log("incoming call from", callStatus);
+        setCallerId(callerId);
+        setRingingAtom(true);
+        setVideoCallDetails({
+          channelName: channelName,
+          callStatus: callStatus,
+          callerId: callerId,
+          calleeId: calleeId,
+          callerName: callerName,
+          callerUsername: callerUsername,
+          callerProfilePic: callerProfilePic,
+          calleeName: calleeName,
+          calleeUsername: calleeUsername,
+          calleeProfilePic: calleeProfilePic,
+        });
 
-      navigate(RouteNames.home.path + `video2/` + channelName);
-    });
+        navigate(RouteNames.home.path + `video2/` + channelName);
+      }
+    );
 
     return () => {
-      socket?.off('incomingCall');
-      socket?.off('callAnswered');
+      socket?.off("incomingCall");
     };
   }, [socket]);
 
+  // useEffect(() => {
+  //   socket?.on(
+  //     "callAccepted",
+  //     ({
+  //       callerId,
+  //       calleeId,
+  //       channelName,
+  //       callStatus,
+  //     }: {
+  //       callerId: string;
+  //       calleeId: string;
+  //       channelName: string;
+  //       callStatus: string;
+  //     }) => {
+  //       console.log(
+  //         "call accepted",
+  //         channelName,
+  //         callerId,
+  //         calleeId,
+  //         callStatus
+  //       );
+
+  //       if (
+  //         (channelName === videoCallDetails?.channelName &&
+  //           callerId === videoCallDetails?.callerId &&
+  //           calleeId === videoCallDetails?.calleeId,
+  //         videoCallDetails?.callStatus === VIDEO_CALL_STATUS_TYPES.RINGING)
+  //       ) {
+  //         setVideoCallDetails({
+  //           channelName: videoCallDetails?.channelName,
+  //           callStatus: callStatus,
+  //           callerId: videoCallDetails?.callerId,
+  //           calleeId: videoCallDetails?.calleeId,
+  //           callerName: videoCallDetails?.callerName,
+  //           callerUsername: videoCallDetails?.callerUsername,
+  //           callerProfilePic: videoCallDetails?.callerProfilePic,
+  //           calleeName: videoCallDetails?.calleeName,
+  //           calleeUsername: videoCallDetails?.calleeUsername,
+  //           calleeProfilePic: videoCallDetails?.calleeProfilePic,
+  //         });
+  //       }
+  //     }
+  //   );
+
+  //   return () => {
+  //     socket?.off("callAnswered");
+  //   };
+  // }, [socket]);
 
   return (
     <>
-    <Box position={'relative'} w={'full'}>
-      {!isCall && <>{user && Object.keys(user).length > 0 ? <Container maxW={"620px"}><Header /></Container> : <Header />}</>}
-      <Routes>
-        <Route path="/register" element={!user || Object.keys(user).length === 0 ? <SignupPage /> : <Navigate to={RouteNames.home.path}/>} />
-        <Route path="/login" element={!user || Object.keys(user).length === 0 ? <LoginPage /> : <Navigate to={RouteNames.home.path}/>} />
-        
-        <Route path="/" element={user && Object.keys(user).length > 0 ? <Container maxW={"900px"}><HomePage/></Container> : <Navigate to={RouteNames.signup.path}/>}/>
-        <Route
-          path="/:username"
-          element={
-            user && Object.keys(user).length > 0 ?
-            <Container maxW={"620px"}>
-              <UserPage />
-              <CreatePost />
-            </Container>
-            : <Navigate to={RouteNames.login.path}/>
-          }
-        />
-        <Route
-          path="/:username/post/:pid"
-          element={
-            user && Object.keys(user).length > 0 ?
-            <Container maxW={"620px"}>
-              <PostPage />
-            </Container>
-            : <Navigate to={RouteNames.login.path}/>
-          }
-        />
-        <Route path="/profile/edit" element={user && Object.keys(user).length > 0 ? <Container maxW={"620px"}><EditProfilePage /></Container> : <Navigate to={RouteNames.login.path}/>}/>
-        <Route path="/chat" element={user && Object.keys(user).length > 0 ? <Container maxW={"620px"}><ChatPage /></Container> : <Navigate to={RouteNames.login.path}/>}/>
-        <Route path="/settings" element={user && Object.keys(user).length > 0 ? <Container maxW={"620px"}><SettingsPage /></Container> : <Navigate to={RouteNames.login.path}/>}/>
+      <Box position={"relative"} w={"full"}>
+        {!isCall && (
+          <>
+            {user && Object.keys(user).length > 0 ? (
+              <Container maxW={"620px"}>
+                <Header />
+              </Container>
+            ) : (
+              <Header />
+            )}
+          </>
+        )}
+        <Routes>
+          <Route
+            path="/register"
+            element={
+              !user || Object.keys(user).length === 0 ? (
+                <SignupPage />
+              ) : (
+                <Navigate to={RouteNames.home.path} />
+              )
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              !user || Object.keys(user).length === 0 ? (
+                <LoginPage />
+              ) : (
+                <Navigate to={RouteNames.home.path} />
+              )
+            }
+          />
 
-        <Route path="/call" element={user && Object.keys(user).length > 0 ? <Container maxW={"620px"}><VoiceCall /></Container> : <Navigate to={RouteNames.login.path}/>}/>
-        <Route path="/video-call" element={user && Object.keys(user).length > 0 ? <Container maxW={"620px"}><VideoCallPage /></Container> : <Navigate to={RouteNames.login.path}/>}/>
-        <Route path="/video2/:calleeId" element={user && Object.keys(user).length > 0 ? <VideoCallPage2 /> : <Navigate to={RouteNames.login.path}/>}/>
+          <Route
+            path="/"
+            element={
+              user && Object.keys(user).length > 0 ? (
+                <Container maxW={"900px"}>
+                  <HomePage />
+                </Container>
+              ) : (
+                <Navigate to={RouteNames.signup.path} />
+              )
+            }
+          />
+          <Route
+            path="/:username"
+            element={
+              user && Object.keys(user).length > 0 ? (
+                <Container maxW={"620px"}>
+                  <UserPage />
+                  <CreatePost />
+                </Container>
+              ) : (
+                <Navigate to={RouteNames.login.path} />
+              )
+            }
+          />
+          <Route
+            path="/:username/post/:pid"
+            element={
+              user && Object.keys(user).length > 0 ? (
+                <Container maxW={"620px"}>
+                  <PostPage />
+                </Container>
+              ) : (
+                <Navigate to={RouteNames.login.path} />
+              )
+            }
+          />
+          <Route
+            path="/profile/edit"
+            element={
+              user && Object.keys(user).length > 0 ? (
+                <Container maxW={"620px"}>
+                  <EditProfilePage />
+                </Container>
+              ) : (
+                <Navigate to={RouteNames.login.path} />
+              )
+            }
+          />
+          <Route
+            path="/chat"
+            element={
+              user && Object.keys(user).length > 0 ? (
+                <Container maxW={"620px"}>
+                  <ChatPage />
+                </Container>
+              ) : (
+                <Navigate to={RouteNames.login.path} />
+              )
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              user && Object.keys(user).length > 0 ? (
+                <Container maxW={"620px"}>
+                  <SettingsPage />
+                </Container>
+              ) : (
+                <Navigate to={RouteNames.login.path} />
+              )
+            }
+          />
 
+          <Route
+            path="/call"
+            element={
+              user && Object.keys(user).length > 0 ? (
+                <Container maxW={"620px"}>
+                  <VoiceCall />
+                </Container>
+              ) : (
+                <Navigate to={RouteNames.login.path} />
+              )
+            }
+          />
+          <Route
+            path="/video-call"
+            element={
+              user && Object.keys(user).length > 0 ? (
+                <Container maxW={"620px"}>
+                  <VideoCallPage />
+                </Container>
+              ) : (
+                <Navigate to={RouteNames.login.path} />
+              )
+            }
+          />
+          <Route
+            path="/video2/:calleeId"
+            element={
+              user && Object.keys(user).length > 0 ? (
+                <VideoCallPage2 />
+              ) : (
+                <Navigate to={RouteNames.login.path} />
+              )
+            }
+          />
 
+          <Route path="/404" element={<NotFoundPage />} />
+        </Routes>
 
-        
-      </Routes>
-      
-
-      {/* {user && Object.keys(user).length > 0 && <LogoutButton />} */}
-      {/* {user && Object.keys(user).length > 0 && <CreatePost />} */}
-
-    </Box>
+        {/* {user && Object.keys(user).length > 0 && <LogoutButton />} */}
+        {/* {user && Object.keys(user).length > 0 && <CreatePost />} */}
+      </Box>
     </>
   );
 }
